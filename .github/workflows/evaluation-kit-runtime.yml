@@ -17,6 +17,7 @@ jobs:
 
       - name: Verify required files exist
         run: |
+          set -euo pipefail
           files=(
             "README.md"
             "START_HERE.md"
@@ -35,36 +36,49 @@ jobs:
             "reproduce.sh"
             ".gitattributes"
           )
-          
+
           for file in "${files[@]}"; do
             if [ ! -f "$file" ]; then
               echo "FAIL: Required file missing: $file"
               exit 1
             fi
           done
-          echo "✓ All required files present"
+
+          echo "All required files present"
 
       - name: Validate verified-repo-registry.json
         run: |
-          registry_count=$(jq 'length' verified-repo-registry.json)
+          set -euo pipefail
+          jq empty verified-repo-registry.json
+
+          registry_count="$(jq 'length' verified-repo-registry.json)"
           if [ "$registry_count" -ne 30 ]; then
             echo "FAIL: registry must contain exactly 30 entries. Found: $registry_count"
             exit 1
           fi
-          
-          unpinned_count=$(jq '[.[] | select(.commit == "UNPINNED" or .commit == "" or .commit == null)] | length' verified-repo-registry.json)
+
+          missing_fields="$(jq -r '.[] | select((has("name") | not) or (has("url") | not) or (has("commit") | not) or (has("verify_command") | not)) | .name // "UNKNOWN_ENTRY"' verified-repo-registry.json)"
+          if [ -n "$missing_fields" ]; then
+            echo "FAIL: registry entries missing required fields"
+            echo "$missing_fields"
+            exit 1
+          fi
+
+          unpinned_count="$(jq '[.[] | select(.commit == "UNPINNED" or .commit == "" or .commit == null)] | length' verified-repo-registry.json)"
           if [ "$unpinned_count" -ne 0 ]; then
             echo "FAIL_CLOSED: registry contains unpinned commits"
+            jq -r '.[] | select(.commit == "UNPINNED" or .commit == "" or .commit == null) | .name' verified-repo-registry.json
             exit 1
           fi
-          
-          invalid_commits=$(jq -r '.[] | select(.commit | test("[^0-9a-f]") or length != 40) | .name' verified-repo-registry.json)
+
+          invalid_commits="$(jq -r '.[] | select((.commit | type != "string") or ((.commit | test("^[0-9a-f]{40}$")) | not)) | .name' verified-repo-registry.json)"
           if [ -n "$invalid_commits" ]; then
-            echo "FAIL: Invalid commit format"
+            echo "FAIL: invalid commit format"
+            echo "$invalid_commits"
             exit 1
           fi
-          
-          echo "✓ Registry validated: 30 entries, all pinned, all valid"
+
+          echo "Registry validated: 30 entries, all pinned, all valid"
 
       - name: Build Docker image
         run: docker build -t riverbraid-evaluator .
@@ -72,16 +86,18 @@ jobs:
       - name: Run evaluation kit
         id: run-kit
         run: |
+          set -euo pipefail
           docker run --rm riverbraid-evaluator | tee kit-output.txt
           if grep -q "REPRODUCTION_MATCH" kit-output.txt; then
-            echo "status=pass" >> $GITHUB_OUTPUT
+            echo "status=pass" >> "$GITHUB_OUTPUT"
           else
-            echo "status=fail" >> $GITHUB_OUTPUT
+            echo "status=fail" >> "$GITHUB_OUTPUT"
+            echo "FAIL_CLOSED: reproduction output did not contain REPRODUCTION_MATCH"
             exit 1
           fi
 
-      - name: Generate verification summary
-        if: always()
+      - name: Generate verification success summary
+        if: success()
         run: |
           cat > verification-summary.json <<'EOF'
           {
@@ -95,9 +111,25 @@ jobs:
           EOF
           jq . verification-summary.json
 
+      - name: Generate verification failure summary
+        if: failure()
+        run: |
+          cat > verification-summary.json <<'EOF'
+          {
+            "status": "GITHUB_ACTIONS_RUNTIME_VERIFICATION_FAIL",
+            "repository": "Riverbraid/Riverbraid-Evaluation-Kit",
+            "runtime_claim": "EXECUTED_FAILED_OR_BLOCKED_IN_GITHUB_ACTIONS",
+            "docker_claim": "NOT_VERIFIED",
+            "verification_surface": "ubuntu-latest GitHub Actions",
+            "local_windows_claim": "NOT_REQUIRED"
+          }
+          EOF
+          jq . verification-summary.json
+
       - name: Upload summary
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: verification-summary
           path: verification-summary.json
+          if-no-files-found: error
