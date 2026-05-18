@@ -1,0 +1,182 @@
+[
+  {
+    "name": "Riverbraid-Core",
+    "url": "https://github.com/Riverbraid/Riverbraid-Core.git",
+    "commit": "UNPINNED",
+    "verify_command": "npm test"
+  },
+  {
+    "name": "Riverbraid-Golds",
+    "url": "https://github.com/Riverbraid/Riverbraid-Golds.git",
+    "commit": "UNPINNED",
+    "verify_command": "npm test"
+  },
+  {
+    "name": "Riverbraid-Action-Gold",
+    "url": "https://github.com/Riverbraid/Riverbraid-Action-Gold.git",
+    "commit": "UNPINNED",
+    "verify_command": "npm test"
+  },
+  {
+    "name": "Riverbraid-Audio-Gold",
+    "url": "https://github.com/Riverbraid/Riverbraid-Audio-Gold.git",
+    "commit": "UNPINNED",
+    "verify_command": "npm test"
+  },
+  {
+    "name": "Riverbraid-Cognition",
+    "url": "https://github.com/Riverbraid/Riverbraid-Cognition.git",
+    "commit": "UNPINNED",
+    "verify_command": "npm test"
+  },
+  {
+    "name": "Riverbraid-Crypto-Gold",
+    "url": "https://github.com/Riverbraid/Riverbraid-Crypto-Gold.git",
+    "commit": "UNPINNED",
+    "verify_command": "npm test"
+  },
+  {
+    "name": "Riverbraid-GPG-Gold",
+    "url": "https://github.com/Riverbraid/Riverbraid-GPG-Gold.git",
+    "commit": "UNPINNED",
+    "verify_command": "npm test"
+  },
+  {
+    "name": "Riverbraid-Governance-Gold",
+    "url": "https://github.com/Riverbraid/Riverbraid-Governance-Gold.git",
+    "commit": "UNPINNED",
+    "verify_command": "npm test"
+  },
+  {
+    "name": "Riverbraid-Harness-Gold",
+    "url": "https://github.com/Riverbraid/Riverbraid-Harness-Gold.git",
+    "commit": "UNPINNED",
+    "verify_command": "npm test"
+  },
+  {
+    "name": "Riverbraid-Identity-Gold",
+    "url": "https://github.com/Riverbraid/Riverbraid-Identity-Gold.git",
+    "commit": "UNPINNED",
+    "verify_command": "npm test"
+  },
+  {
+    "name": "Riverbraid-Integration-Gold",
+    "url": "https://github.com/Riverbraid/Riverbraid-Integration-Gold.git",
+    "commit": "UNPINNED",
+    "verify_command": "npm test"
+  },
+  {
+    "name": "Riverbraid-Interface-Gold",
+    "url": "https://github.com/Riverbraid/Riverbraid-Interface-Gold.git",
+    "commit": "UNPINNED",
+    "verify_command": "npm test"
+  },
+  {
+    "name": "Riverbraid-Judicial-Gold",
+    "url": "https://github.com/Riverbraid/Riverbraid-Judicial-Gold.git",
+    "commit": "UNPINNED",
+    "verify_command": "npm test"
+  },
+  {
+    "name": "Riverbraid-Lite",
+    "url": "https://github.com/Riverbraid/Riverbraid-Lite.git",
+    "commit": "UNPINNED",
+    "verify_command": "npm test"
+  },
+  {
+    "name": "Riverbraid-Manifest-Gold",
+    "url": "https://github.com/Riverbraid/Riverbraid-Manifest-Gold.git",
+    "commit": "UNPINNED",
+    "verify_command": "npm test"
+  },
+  {
+    "name": "Riverbraid-Memory-Gold",
+    "url": "https://github.com/Riverbraid/Riverbraid-Memory-Gold.git",
+    "commit": "UNPINNED",
+    "verify_command": "npm test"
+  },
+  {
+    "name": "Riverbraid-Network-Gold",
+    "url": "https://github.com/Riverbraid/Riverbraid-Network-Gold.git",
+    "commit": "UNPINNED",
+    "verify_command": "npm test"
+  },
+  {
+    "name": "Riverbraid-Refusal-Gold",
+    "url": "https://github.com/Riverbraid/Riverbraid-Refusal-Gold.git",
+    "commit": "UNPINNED",
+    "verify_command": "npm test"
+  },
+  {
+    "name": "Riverbraid-Safety-Gold",
+    "url": "https://github.com/Riverbraid/Riverbraid-Safety-Gold.git",
+    "commit": "UNPINNED",
+    "verify_command": "npm test"
+  },
+  {
+    "name": "Riverbraid-Security-Gold",
+    "url": "https://github.com/Riverbraid/Riverbraid-Security-Gold.git",
+    "commit": "UNPINNED",
+    "verify_command": "npm test"
+  },
+  {
+    "name": "Riverbraid-Standard-IO",
+    "url": "https://github.com/Riverbraid/Riverbraid-Standard-IO.git",
+    "commit": "UNPINNED",
+    "verify_command": "npm test"
+  },
+  {
+    "name": "Riverbraid-Storage-Gold",
+    "url": "https://github.com/Riverbraid/Riverbraid-Storage-Gold.git",
+    "commit": "UNPINNED",
+    "verify_command": "npm test"
+  },
+  {
+    "name": "Riverbraid-Temporal-Gold",
+    "url": "https://github.com/Riverbraid/Riverbraid-Temporal-Gold.git",
+    "commit": "UNPINNED",
+    "verify_command": "npm test"
+  },
+  {
+    "name": "Riverbraid-Types",
+    "url": "https://github.com/Riverbraid/Riverbraid-Types.git",
+    "commit": "UNPINNED",
+    "verify_command": "npm test"
+  },
+  {
+    "name": "Riverbraid-Verification-Suite",
+    "url": "https://github.com/Riverbraid/Riverbraid-Verification-Suite.git",
+    "commit": "UNPINNED",
+    "verify_command": "npm test"
+  },
+  {
+    "name": "Riverbraid-Vision-Gold",
+    "url": "https://github.com/Riverbraid/Riverbraid-Vision-Gold.git",
+    "commit": "UNPINNED",
+    "verify_command": "npm test"
+  },
+  {
+    "name": "Riverbraid-Weave-Gold",
+    "url": "https://github.com/Riverbraid/Riverbraid-Weave-Gold.git",
+    "commit": "UNPINNED",
+    "verify_command": "npm test"
+  },
+  {
+    "name": "Riverbraid-Bridge-Gold",
+    "url": "https://github.com/Riverbraid/Riverbraid-Bridge-Gold.git",
+    "commit": "UNPINNED",
+    "verify_command": "npm test"
+  },
+  {
+    "name": "Riverbraid-Bio-Gold",
+    "url": "https://github.com/Riverbraid/Riverbraid-Bio-Gold.git",
+    "commit": "UNPINNED",
+    "verify_command": "npm test"
+  },
+  {
+    "name": "Riverbraid-Flow-Gold",
+    "url": "https://github.com/Riverbraid/Riverbraid-Flow-Gold.git",
+    "commit": "UNPINNED",
+    "verify_command": "npm test"
+  }
+]

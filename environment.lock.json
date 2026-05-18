@@ -1,0 +1,14 @@
+{
+  "platform": "linux/amd64",
+  "tools": {
+    "node": "20.11.0",
+    "npm": "10.2.4",
+    "git": "system",
+    "jq": "system"
+  },
+  "docker_base_image": {
+    "name": "node:20.11.0-bookworm-slim",
+    "digest": "UNPINNED"
+  },
+  "status": "SCAFFOLD_UNPINNED_FAIL_CLOSED"
+}
