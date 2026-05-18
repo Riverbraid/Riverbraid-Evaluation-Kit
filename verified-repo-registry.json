@@ -9,7 +9,7 @@
     "name": "Riverbraid-Golds",
     "url": "https://github.com/Riverbraid/Riverbraid-Golds.git",
     "commit": "8a063eab2be15d346eae5708584c4574b29a4995",
-    "verify_command": "npm run test:riverbraid"
+    "verify_command": "npm run verify:feature-flow"
   },
   {
     "name": "Riverbraid-Action-Gold",
