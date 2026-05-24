@@ -7,6 +7,9 @@
  * Purpose: Inventory tags, branches, root files, and verification surfaces
  * across the 30 repositories defined in verified-repo-registry.json
  * 
+ * Audit Scope: CURRENT DEFAULT BRANCH SURFACE
+ * (Does not checkout pinned_commit; inventories current branch state only)
+ * 
  * Output: riverbraid-30-surface-inventory.json
  * 
  * Usage:
@@ -14,14 +17,15 @@
  * 
  * Requirements:
  *   - git CLI available and in PATH
- *   - Node.js with fs, path, child_process modules
+ *   - Node.js v14+ with fs, path, child_process modules
  *   - Read-only access to GitHub repositories
  *   - ~500MB free disk space for temporary clones
+ *   - Windows 10+ or Unix-like system (uses cross-platform fs.rmSync)
  */
 
 const fs = require('fs');
 const path = require('path');
-const { execSync, spawnSync } = require('child_process');
+const { execSync } = require('child_process');
 const os = require('os');
 
 // Configuration
@@ -50,7 +54,11 @@ const JUNK_PATTERNS = [
   '*~'
 ];
 
+// Directories to skip during recursive junk scan (except root check for .DS_Store)
+const SKIP_DIRS = ['.git', 'node_modules', '.next', 'dist', 'build', '.vscode', '.idea'];
+
 console.log('[AUDIT] Riverbraid 30-Repository Surface Inventory');
+console.log('[AUDIT] Scope: CURRENT DEFAULT BRANCH SURFACE (not pinned registry commits)');
 console.log(`[AUDIT] Output: ${OUTPUT_PATH}`);
 console.log(`[AUDIT] Work directory: ${WORK_DIR}`);
 console.log('[AUDIT] Mode: READ-ONLY');
@@ -96,6 +104,8 @@ for (let i = 0; i < repos.length; i++) {
     url: repoUrl,
     pinned_commit: pinnedCommit,
     verify_command: verifyCommand,
+    audit_scope: 'CURRENT_DEFAULT_BRANCH_SURFACE',
+    checkout_matches_pinned_commit: false,
     clone: 'NOT_ATTEMPTED',
     default_branch: 'UNKNOWN',
     branches: [],
@@ -171,12 +181,12 @@ for (let i = 0; i < repos.length; i++) {
       entry.tags = [];
     }
 
-    // List root files
+    // List root files (INCLUDING dotfiles and directories, EXCEPT .git)
     try {
       const files = fs.readdirSync(repoPath, { withFileTypes: true });
       entry.root_files = files
+        .filter(f => f.name !== '.git') // Skip .git directory itself
         .map(f => (f.isDirectory() ? f.name + '/' : f.name))
-        .filter(f => !f.startsWith('.'))
         .sort();
     } catch (e) {
       entry.surface_findings.push(`failed to list root files: ${e.message}`);
@@ -206,12 +216,16 @@ for (let i = 0; i < repos.length; i++) {
       }
     }
 
-    // Check for junk files
+    // Check for junk files (including dotfiles, excluding .git)
     try {
       const walkDir = (dir, callback) => {
         const files = fs.readdirSync(dir, { withFileTypes: true });
         for (const file of files) {
-          if (file.name.startsWith('.')) continue;
+          // Skip .git directory entirely
+          if (file.name === '.git') continue;
+          // Skip other common large directories
+          if (SKIP_DIRS.includes(file.name)) continue;
+
           const fullPath = path.join(dir, file.name);
           if (file.isDirectory()) {
             walkDir(fullPath, callback);
@@ -221,6 +235,13 @@ for (let i = 0; i < repos.length; i++) {
         }
       };
 
+      // Special check for .DS_Store in root (before recursive walk)
+      const dsStoreRoot = path.join(repoPath, '.DS_Store');
+      if (fs.existsSync(dsStoreRoot)) {
+        entry.surface_findings.push('possible junk file: .DS_Store');
+      }
+
+      // Recursive junk scan
       walkDir(repoPath, (fullPath, fileName) => {
         for (const pattern of JUNK_PATTERNS) {
           const regexPattern = pattern
@@ -271,6 +292,8 @@ const output = {
   metadata: {
     audit_timestamp: new Date().toISOString(),
     mode: 'READ_ONLY',
+    audit_scope: 'CURRENT_DEFAULT_BRANCH_SURFACE',
+    note: 'This audit inventories the current state of the default branch in each repository. It does not checkout pinned registry commits. To verify pinned reproducibility, use: git checkout <pinned_commit>',
     mutation_scope: 'NONE',
     deletion_allowed: false,
     registry_count: repos.length,
@@ -306,15 +329,17 @@ try {
   process.exit(1);
 }
 
-// Cleanup
+// Cleanup using cross-platform fs.rmSync (Windows + Unix safe)
 console.log('');
 console.log('[CLEANUP] Removing temporary directory...');
 try {
-  execSync(`rm -rf "${WORK_DIR}"`, { stdio: 'pipe' });
-  console.log('[OK] Temporary directory cleaned up');
+  if (fs.existsSync(WORK_DIR)) {
+    fs.rmSync(WORK_DIR, { recursive: true, force: true });
+    console.log('[OK] Temporary directory cleaned up');
+  }
 } catch (err) {
   console.warn(`[WARN] Failed to remove temporary directory: ${err.message}`);
-  console.warn(`[WARN] Manual cleanup: rm -rf "${WORK_DIR}"`);
+  console.warn(`[WARN] Manual cleanup may be needed: ${WORK_DIR}`);
 }
 
 console.log('');
@@ -323,8 +348,15 @@ console.log('AUDIT COMPLETE');
 console.log('═══════════════════════════════════════════════════════');
 console.log(`Output: ${OUTPUT_PATH}`);
 console.log('');
+console.log('Audit Scope Note:');
+console.log('  This audit inventories CURRENT DEFAULT BRANCH surfaces.');
+console.log('  To verify pinned registry reproducibility, each repo in the');
+console.log('  results includes pinned_commit. Use:');
+console.log('    git checkout <pinned_commit>');
+console.log('  to inspect registry-pinned state separately.');
+console.log('');
 console.log('Next steps:');
-console.log('1. Review output JSON for surface findings');
-console.log('2. Classify tags by protection policy');
-console.log('3. Do NOT delete tags yet - classification first');
+console.log('1. Review output JSON for surface findings and tag_naming_findings');
+console.log('2. Classify tags by protection policy (do not delete yet)');
+console.log('3. Compare current-branch surface to pinned-commit surface if needed');
 console.log('');
