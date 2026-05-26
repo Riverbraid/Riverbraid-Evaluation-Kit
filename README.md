@@ -3,6 +3,18 @@
 This kit is a scaffold for independent reproduction of Riverbraid's verified governance floor.
 It is designed to fail closed.
 
+## Role in Riverbraid
+
+Riverbraid-Evaluation-Kit is the current public entry and evaluation surface for Riverbraid.
+
+## Public verification boundary
+
+This repository defines the current public canonical verification registry and reproduction path for Riverbraid's governance floor.
+
+## Evidence boundary
+
+This repository does not claim certification, legal approval, production readiness, absolute security, external audit, complete AI safety, adoption, or absence of defects.
+
 ## Verification Paths
 
 ### Preferred: GitHub Actions (Canonical, No Local Setup Required)
