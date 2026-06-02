@@ -7,6 +7,9 @@ on:
     branches: [main]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   verify-kit:
     name: Verify Evaluation Kit
@@ -117,19 +120,7 @@ jobs:
           cat > verification-summary.json <<'EOF'
           {
             "status": "GITHUB_ACTIONS_RUNTIME_VERIFICATION_FAIL",
-            "repository": "Riverbraid/Riverbraid-Evaluation-Kit",
-            "runtime_claim": "EXECUTED_FAILED_OR_BLOCKED_IN_GITHUB_ACTIONS",
-            "docker_claim": "NOT_VERIFIED",
-            "verification_surface": "ubuntu-latest GitHub Actions",
-            "local_windows_claim": "NOT_REQUIRED"
+            "repository": "Riverbraid/Riverbraid-Evaluation-Kit"
           }
           EOF
           jq . verification-summary.json
-
-      - name: Upload summary
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: verification-summary
-          path: verification-summary.json
-          if-no-files-found: error
