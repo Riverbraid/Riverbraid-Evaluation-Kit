@@ -55,6 +55,39 @@ resolve_verify_command() {
   return 1
 }
 
+run_resolved_verify_command() {
+  local command="$1"
+
+  case "$command" in
+    "npm test")
+      npm test
+      ;;
+    "npm run verify")
+      npm run verify
+      ;;
+    "npm run test:riverbraid")
+      npm run test:riverbraid
+      ;;
+    "npm run verify:feature-flow")
+      npm run verify:feature-flow
+      ;;
+    "node verify.mjs")
+      node verify.mjs
+      ;;
+    "node run-vectors.cjs verify")
+      node run-vectors.cjs verify
+      ;;
+    "test -f README.md")
+      test -f README.md
+      ;;
+    *)
+      echo "FAIL_CLOSED: verifier command is not in the Evaluation Kit allowlist"
+      echo "resolved_verify_command=$command"
+      return 1
+      ;;
+  esac
+}
+
 TOTAL=0
 PASS=0
 FAIL=0
@@ -111,7 +144,7 @@ while IFS= read -r entry; do
     npm ci --silent
   fi
 
-  if bash -lc "$resolved_verify_command"; then
+  if run_resolved_verify_command "$resolved_verify_command"; then
     PASS=$((PASS + 1))
   else
     echo "FAIL: verifier failed for $name"
