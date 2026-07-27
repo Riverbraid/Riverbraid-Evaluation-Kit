@@ -114,10 +114,10 @@ while IFS= read -r entry; do
   echo "resolved_verify_command=$resolved_verify_command"
 
   if [ -f package-lock.json ]; then
-    npm ci --silent
+    npm ci --ignore-scripts --silent
   elif [ -f package.json ] && [[ "$resolved_verify_command" == npm* ]]; then
     npm install --package-lock-only --ignore-scripts --silent
-    npm ci --silent
+    npm ci --ignore-scripts --silent
   fi
 
   if run_resolved_verify_command "$resolved_verify_command"; then
