@@ -15,14 +15,11 @@ jobs:
     name: Verify Evaluation Kit
     runs-on: ubuntu-24.04
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-
       - name: Observe Docker base image identity
         id: base-image
         run: |
           set -euo pipefail
-          base_image="$(jq -r '.docker_base_image.name' environment.lock.json)"
+          base_image="node:20.11.0-bookworm-slim"
           digest="$(docker buildx imagetools inspect "$base_image" | awk '/^Digest:/ {print $2; exit}')"
           if [[ ! "$digest" =~ ^sha256:[0-9a-f]{64}$ ]]; then
             echo "FAIL_CLOSED: unable to resolve attributable Docker base image digest"
@@ -33,6 +30,22 @@ jobs:
           echo "BASE_IMAGE_NAME=$base_image"
           echo "BASE_IMAGE_RESOLVED_DIGEST=$digest"
           echo "digest=$digest" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Verify environment-lock base image name
+        run: |
+          set -euo pipefail
+          expected_name="node:20.11.0-bookworm-slim"
+          locked_name="$(jq -r '.docker_base_image.name' environment.lock.json)"
+          if [ "$locked_name" != "$expected_name" ]; then
+            echo "FAIL_CLOSED: environment-lock base image name differs from observed workflow subject"
+            echo "expected=$expected_name"
+            echo "actual=$locked_name"
+            exit 1
+          fi
+          echo "BASE_IMAGE_NAME_MATCH"
 
       - name: Verify required files exist
         run: |
