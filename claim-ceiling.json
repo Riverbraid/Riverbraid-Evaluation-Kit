@@ -23,7 +23,7 @@
     "job_id": 90025597247,
     "result": "SUCCESS",
     "limits": [
-      "This historical run predates the command-policy negative-test contract added later in PR #13.",
+      "This historical run predates the command-policy negative-test and lifecycle-script-denial controls added later in PR #13.",
       "The run evaluated a GitHub pull-request merge ref, not a future final main commit.",
       "The Docker image built successfully, but the base-image digest remains unpinned.",
       "The run does not establish independent reproduction or equal verification depth."
@@ -35,19 +35,22 @@
     "negative_test": "tests/command-policy-negative.sh",
     "workflow_requirement": ".github/workflows/evaluation-kit-runtime.yml",
     "required_negative_result": "ALLOWLIST_NEGATIVE_TEST_PASS",
+    "dependency_install_policy": "NPM_CI_WITH_IGNORE_SCRIPTS",
+    "package_lock_creation_policy": "NPM_INSTALL_PACKAGE_LOCK_ONLY_WITH_IGNORE_SCRIPTS",
+    "lifecycle_scripts": "DENIED",
     "evidence_rule": "The current pass or failure belongs in the workflow or evidence record for the exact assessed commit; this declaration does not self-certify it."
   },
   "allowed_claims": [
     "Riverbraid-Evaluation-Kit is the current public entry and evaluation surface for the declared Riverbraid governance floor.",
-    "The repository contains a pinned 30-repository registry, expected results, a bounded command-dispatch policy, an explicit unsupported-command negative test, container and workflow scaffolding, and public reproduction instructions.",
+    "The repository contains a pinned 30-repository registry, expected results, a bounded command-dispatch policy, an explicit unsupported-command negative test, lifecycle-script-denied npm installation, container and workflow scaffolding, and public reproduction instructions.",
     "A specific execution may claim only that the configured commands and policy tests produced the recorded results under the observed source, environment, and evaluator version.",
     "Registry command depth varies and must remain visible when interpreting any aggregate result."
   ],
   "current_limitations": [
     {
-      "code": "LIFECYCLE_SCRIPT_POLICY_UNRESOLVED",
+      "code": "DECLARED_NETWORK_DEPENDENCY_ACQUISITION",
       "issue": "Riverbraid/Riverbraid-Evaluation-Kit#8",
-      "claim_effect": "The adopted scope still requires an explicit disposition on package-manager lifecycle-script execution and dependency-install behavior."
+      "claim_effect": "Lifecycle scripts are denied, but npm dependency acquisition still uses the network and therefore does not support an offline, hermetic, or fully supply-chain-isolated claim."
     },
     {
       "code": "DOCKER_BASE_DIGEST_UNPINNED",
@@ -75,6 +78,8 @@
     "adoption",
     "automatic registry freshness",
     "equal verification depth across all registry entries",
+    "offline or hermetic reproduction",
+    "full supply-chain isolation",
     "full 52-repository account verification",
     "full constellation operation",
     "downstream AI behavior assurance",
@@ -86,7 +91,8 @@
     "aggregate_pass_conceals_component_depth": false,
     "registry_membership_equals_functional_core_membership": false,
     "workflow_success_equals_external_independence": false,
-    "source_test_presence_equals_test_execution": false
+    "source_test_presence_equals_test_execution": false,
+    "ignore_scripts_equals_offline_dependency_resolution": false
   },
   "related_surfaces": {
     "registry": "verified-repo-registry.json",
@@ -103,6 +109,7 @@
     "registry succession or pin change",
     "expected-results change",
     "command-policy or dispatch change",
+    "dependency-install policy change",
     "verification-depth change",
     "environment or Docker lock change",
     "claim-boundary change",
@@ -112,7 +119,7 @@
   "nonclaims": [
     "This declaration is not itself execution evidence.",
     "A successful repository-owned workflow does not establish independent reproduction.",
-    "The presence of the negative test does not prove it passed for an exact commit; consult the corresponding workflow record.",
+    "The presence of the negative test and lifecycle-script denial does not prove they passed for an exact commit; consult the corresponding workflow record.",
     "This declaration does not upgrade a presence check into a behavioral verifier.",
     "This declaration does not close issues 8, 9, 10, or 11."
   ]
