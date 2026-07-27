@@ -7,6 +7,15 @@ REGISTRY_FILE="/evaluator/verified-repo-registry.json"
 EXPECTED_FILE="/evaluator/expected-results.json"
 RESULTS_FILE="/tmp/riverbraid-actual-results.json"
 WORK_ROOT="/tmp/riverbraid-evaluation-workspace"
+COMMAND_POLICY_FILE="/evaluator/command-policy.sh"
+
+if [ ! -f "$COMMAND_POLICY_FILE" ]; then
+  echo "FAIL_CLOSED: command policy file is missing"
+  exit 1
+fi
+
+# shellcheck source=command-policy.sh
+source "$COMMAND_POLICY_FILE"
 
 rm -rf "$WORK_ROOT"
 mkdir -p "$WORK_ROOT"
@@ -53,39 +62,6 @@ resolve_verify_command() {
   fi
 
   return 1
-}
-
-run_resolved_verify_command() {
-  local command="$1"
-
-  case "$command" in
-    "npm test")
-      npm test
-      ;;
-    "npm run verify")
-      npm run verify
-      ;;
-    "npm run test:riverbraid")
-      npm run test:riverbraid
-      ;;
-    "npm run verify:feature-flow")
-      npm run verify:feature-flow
-      ;;
-    "node verify.mjs")
-      node verify.mjs
-      ;;
-    "node run-vectors.cjs verify")
-      node run-vectors.cjs verify
-      ;;
-    "test -f README.md")
-      test -f README.md
-      ;;
-    *)
-      echo "FAIL_CLOSED: verifier command is not in the Evaluation Kit allowlist"
-      echo "resolved_verify_command=$command"
-      return 1
-      ;;
-  esac
 }
 
 TOTAL=0
