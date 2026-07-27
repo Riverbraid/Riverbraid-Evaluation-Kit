@@ -6,9 +6,24 @@
     "git": "system",
     "jq": "system"
   },
+  "github_actions": {
+    "runner": "ubuntu-24.04",
+    "checkout_action": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262"
+  },
   "docker_base_image": {
     "name": "node:20.11.0-bookworm-slim",
-    "digest": "UNPINNED"
+    "digest": "sha256:ecc9a2581f8588014a49a523a9ed146d27963f6d988d11bd16bbdcb3598f5f98",
+    "digest_observation": {
+      "workflow_run": 30285959852,
+      "job": 90043701088,
+      "observation_method": "docker buildx imagetools inspect",
+      "observed_platform_context": "linux/amd64 on ubuntu-24.04 GitHub Actions"
+    }
   },
-  "status": "SCAFFOLD_UNPINNED_FAIL_CLOSED"
+  "dependency_acquisition": {
+    "network_access": "REQUIRED_FOR_NPM_INSTALLATION",
+    "lifecycle_scripts": "DENIED_WITH_IGNORE_SCRIPTS",
+    "offline_or_hermetic": false
+  },
+  "status": "BASE_IMAGE_DIGEST_PINNED_NETWORK_DEPENDENCIES_REMAIN"
 }
