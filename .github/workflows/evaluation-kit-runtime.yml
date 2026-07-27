@@ -13,10 +13,26 @@ permissions:
 jobs:
   verify-kit:
     name: Verify Evaluation Kit
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Observe Docker base image identity
+        id: base-image
+        run: |
+          set -euo pipefail
+          base_image="$(jq -r '.docker_base_image.name' environment.lock.json)"
+          digest="$(docker buildx imagetools inspect "$base_image" | awk '/^Digest:/ {print $2; exit}')"
+          if [[ ! "$digest" =~ ^sha256:[0-9a-f]{64}$ ]]; then
+            echo "FAIL_CLOSED: unable to resolve attributable Docker base image digest"
+            echo "base_image=$base_image"
+            echo "observed_digest=$digest"
+            exit 1
+          fi
+          echo "BASE_IMAGE_NAME=$base_image"
+          echo "BASE_IMAGE_RESOLVED_DIGEST=$digest"
+          echo "digest=$digest" >> "$GITHUB_OUTPUT"
 
       - name: Verify required files exist
         run: |
@@ -108,14 +124,15 @@ jobs:
       - name: Generate verification success summary
         if: success()
         run: |
-          cat > verification-summary.json <<'EOF'
+          cat > verification-summary.json <<EOF
           {
             "status": "GITHUB_ACTIONS_RUNTIME_VERIFICATION_PASS",
             "repository": "Riverbraid/Riverbraid-Evaluation-Kit",
             "runtime_claim": "EXECUTED_IN_GITHUB_ACTIONS",
             "docker_claim": "VERIFIED_IN_GITHUB_ACTIONS",
             "command_policy_negative_test": "ALLOWLIST_NEGATIVE_TEST_PASS",
-            "verification_surface": "ubuntu-latest GitHub Actions",
+            "base_image_observed_digest": "${{ steps.base-image.outputs.digest }}",
+            "verification_surface": "ubuntu-24.04 GitHub Actions",
             "local_windows_claim": "NOT_REQUIRED"
           }
           EOF
