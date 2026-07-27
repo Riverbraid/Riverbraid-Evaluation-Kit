@@ -1,7 +1,8 @@
 # Riverbraid Evaluation Kit v0.1.0 governance floor
 
-This kit is a scaffold for independent reproduction of Riverbraid's declared governance floor.
-It is designed to fail closed.
+This kit is the public evaluation surface and intended independent-reproduction path for Riverbraid's declared governance floor.
+
+It is designed to fail closed. Repository-owned execution does not itself establish independent reproduction.
 
 ## Role in Riverbraid
 
@@ -9,9 +10,9 @@ Riverbraid-Evaluation-Kit is the current public entry and evaluation surface for
 
 ## Public verification boundary
 
-This repository defines the current public pinned verification registry and reproduction path for Riverbraid's governance floor.
+This repository defines the current public pinned verification registry and evaluation path for Riverbraid's governance floor.
 
-`claim-ceiling.json` is the machine-readable declaration of what the exact profile may and may not claim. It defines required policy tests and dependency-install boundaries but does not self-certify the latest workflow result; consult the workflow or PR evidence for the exact commit being assessed.
+`claim-ceiling.json` is the machine-readable declaration of what the exact profile may and may not claim. It defines policy, environment, and dependency-install boundaries but does not self-certify the latest workflow result; consult the workflow or PR evidence for the exact commit being assessed.
 
 ## Evidence boundary
 
@@ -24,14 +25,16 @@ Current controls and limitations:
 - CI must execute that negative test before building and running the Evaluation Kit container;
 - npm dependency installation uses `--ignore-scripts`, so package lifecycle scripts are denied;
 - npm dependency acquisition still uses the network and is not offline or hermetic;
+- the Docker base image is bound by tag and digest in both `Dockerfile` and `environment.lock.json`;
+- CI compares the observed tag digest, locked digest, and Dockerfile digest and fails closed on disagreement;
+- the GitHub Actions runner is `ubuntu-24.04` and checkout is pinned to an exact action commit;
 - the latest result for an exact commit belongs in the corresponding workflow or evidence record;
-- the Docker base-image digest remains unpinned;
 - registry freshness remains locked pending succession evidence and authority;
 - verification depth is nonuniform, including presence-check-only entries.
 
-These conditions are enumerated in `claim-ceiling.json` and tracked in issues #8 through #11.
+These conditions are enumerated in `claim-ceiling.json`. Remaining limitations are tracked in issues #8, #10, and #11. Base-image digest evidence is tracked in #9 until an exact digest-bound head completes successfully.
 
-## Verification Paths
+## Verification paths
 
 ### Preferred public path: GitHub Actions
 
@@ -46,10 +49,12 @@ The intended primary verification path runs on GitHub Actions.
 
 **What the workflow is designed to do:**
 
+- resolve the declared base-image tag identity;
+- verify that the observed tag digest, environment lock, and Dockerfile digest match;
 - verify the required Evaluation Kit files are present;
 - validate that `verified-repo-registry.json` has exactly 30 pinned entries;
 - execute the unsupported-command fail-closed policy test;
-- build the declared Dockerfile;
+- build the digest-pinned Dockerfile;
 - run the verification suite in the resulting container;
 - clone each registered repository at its pinned commit;
 - install npm dependencies with lifecycle scripts denied;
@@ -70,9 +75,9 @@ docker build -t riverbraid-evaluator .
 docker run --rm riverbraid-evaluator
 ```
 
-Do not describe this path as immutable, offline, hermetic, or fully reproducible while the Docker digest is unpinned and npm dependencies are acquired from the network.
+The digest pin makes the declared base-image identity immutable for that reference. It does not make npm dependency acquisition offline, hermetic, vendored, or fully supply-chain isolated.
 
-## Current State
+## Current state
 
 | Aspect | Status |
 |---|---|
@@ -84,7 +89,10 @@ Do not describe this path as immutable, offline, hermetic, or fully reproducible
 | npm dependency acquisition | Network-dependent / not hermetic |
 | Latest policy-test execution | External to this README; consult the exact workflow or PR record |
 | Verification depth | Nonuniform; classified separately |
-| Docker base image | Tag pinned / digest unpinned |
+| Docker base image | Tag and digest pinned |
+| Docker base digest | `sha256:ecc9a2581f8588014a49a523a9ed146d27963f6d988d11bd16bbdcb3598f5f98` |
+| GitHub Actions runner | `ubuntu-24.04` |
+| Checkout action | Exact commit pinned |
 | Public execution surface | GitHub Actions |
 | Local Docker | Optional |
 | Independent reproduction | Not established by repository ownership or self-execution |
@@ -93,7 +101,7 @@ Do not describe this path as immutable, offline, hermetic, or fully reproducible
 
 A successful exact run may establish only that:
 
-- the required policy tests passed for that exact source state;
+- the environment-identity and policy tests passed for that exact source state;
 - the pinned registry commits were acquired for that run;
 - npm dependency installation completed with lifecycle scripts denied;
 - each configured command exited successfully under the observed runner and environment;
@@ -102,7 +110,7 @@ A successful exact run may establish only that:
 
 The interpretation must preserve each command's declared verification depth. A presence check remains a presence check. An `npm test` result is only as strong as the package script and verifier it invokes.
 
-## What a successful run does NOT mean
+## What a successful run does not mean
 
 A successful run does **not** mean:
 
@@ -115,13 +123,13 @@ A successful run does **not** mean:
 - the system is safe in all deployment contexts;
 - the registry is automatically fresh relative to current default branches;
 - all 30 entries have equal behavioral verification depth;
-- dependency acquisition was offline, hermetic, or fully supply-chain isolated;
+- dependency acquisition was offline, hermetic, vendored, or fully supply-chain isolated;
 - all 52 public Riverbraid repositories were evaluated;
 - the F3/F4 functional core has been selected or proven;
 - an independent operator reproduced the profile;
 - downstream AI system behavior is assured.
 
-## Non-Claims
+## Non-claims
 
 This Evaluation Kit explicitly does **not**:
 
@@ -133,7 +141,7 @@ This Evaluation Kit explicitly does **not**:
 - constitute an external audit or third-party assurance;
 - convert registry membership into equal verification depth;
 - convert file presence into behavioral verification;
-- convert lifecycle-script denial into an offline or hermetic dependency claim;
+- convert lifecycle-script denial or base-image pinning into an offline or hermetic dependency claim;
 - convert one successful run into proof of future unchanged behavior.
 
 ## Files
@@ -144,17 +152,17 @@ This Evaluation Kit explicitly does **not**:
 | `START_HERE.md` | First evaluator entry point |
 | `ONE_PAGE_SYSTEM_MAP.md` | Short architecture map |
 | `CLAIM_LEVELS.md` | Claim ladder and evidence rules |
-| `claim-ceiling.json` | Machine-readable allowed claims, refused claims, policy controls, and current limitations |
+| `claim-ceiling.json` | Machine-readable allowed claims, refused claims, controls, and current limitations |
 | `EVALUATOR_DECISION_TREE.md` | Fit check before evaluation |
 | `RISK_PROFILE_MATRIX.md` | Risk-profile boundary guide |
 | `MATURITY_LADDER.md` | Current maturity framing |
 | `REPRODUCE_RIVERBRAID_v0.1.0-governance-floor.md` | Reproduction guide |
 | `verified-repo-registry.json` | Exact repository and commit registry with 30 entries |
-| `expected-results.json` | Expected reproduction output contract |
-| `environment.lock.json` | Tool and environment lock scaffold |
+| `expected-results.json` | Expected evaluation output contract |
+| `environment.lock.json` | Runtime, action, base-image, and dependency-boundary lock |
 | `command-policy.sh` | Shared allowlisted command-execution policy |
 | `tests/command-policy-negative.sh` | Unsupported-command fail-closed test |
-| `Dockerfile` | Containerized evaluation environment |
+| `Dockerfile` | Digest-pinned containerized evaluation environment |
 | `run-verification.sh` | Container verification runner |
 | `reproduce.ps1` | Windows helper script |
 | `reproduce.sh` | Unix helper script |
