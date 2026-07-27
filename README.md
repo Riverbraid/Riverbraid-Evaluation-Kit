@@ -11,20 +11,22 @@ Riverbraid-Evaluation-Kit is the current public entry and evaluation surface for
 
 This repository defines the current public pinned verification registry and reproduction path for Riverbraid's governance floor.
 
-`claim-ceiling.json` is the machine-readable declaration of what the exact profile may and may not claim. It is a boundary artifact, not execution evidence.
+`claim-ceiling.json` is the machine-readable declaration of what the exact profile may and may not claim. It is a boundary artifact that references observed execution; it does not replace the underlying workflow result or evidence packet.
 
 ## Evidence boundary
 
 This repository does not claim certification, legal approval, production readiness, absolute security, external audit, complete AI safety, adoption, or absence of defects.
 
-The current source contains known evidence-gated limitations:
+Current evidence and limitations:
 
-- command dispatch is patched to an allowlist but remains execution-unverified;
-- the Docker base image digest is unpinned;
+- the allowlisted positive workflow path executed successfully for the PR #13 merge ref in GitHub Actions run `30280572040`;
+- explicit negative evidence that an unlisted command fails closed remains required;
+- a disposition on package lifecycle scripts remains required;
+- the Docker image built successfully in that run, but the base-image digest remains unpinned;
 - registry freshness remains locked pending succession evidence and authority;
 - verification depth is nonuniform, including presence-check-only entries.
 
-These limitations are enumerated in `claim-ceiling.json` and tracked in issues #8 through #11.
+These conditions are enumerated in `claim-ceiling.json` and tracked in issues #8 through #11.
 
 ## Verification Paths
 
@@ -50,9 +52,11 @@ The intended primary verification path runs on GitHub Actions.
 - compare results against `expected-results.json`;
 - emit a final JSON summary.
 
-**Evidence rule:**
+**Current observed execution:**
 
-The workflow definition is not proof that a run succeeded. A runtime claim requires an attributable workflow run or preserved local execution packet for the exact commit being assessed.
+GitHub Actions run `30280572040` completed successfully for the PR #13 merge ref. Its successful steps included required-file verification, registry validation, Docker build, Evaluation Kit execution, and generation of the success summary.
+
+That result is positive-path evidence for the exact observed merge candidate. It is not proof that a later changed merge or main commit will produce the same result, and it does not establish the outstanding unlisted-command denial case.
 
 ### Optional: Local Docker
 
@@ -72,10 +76,10 @@ Do not describe this path as immutable, hermetic, or fully reproducible while `e
 | Registry entries | 30 |
 | Registry commit state | Pinned snapshot |
 | Registry freshness | Locked / not automatically current with default branches |
-| Command-dispatch hardening | Patched / execution-unverified |
+| Command-dispatch hardening | Positive allowlisted path executed / explicit negative denial test outstanding |
 | Verification depth | Nonuniform; classified separately |
-| Docker base image | Tag pinned / digest unpinned |
-| Intended public execution surface | GitHub Actions |
+| Docker base image | Build observed successful / digest unpinned |
+| Public execution surface | GitHub Actions |
 | Local Docker | Optional |
 | Independent reproduction | Not established by repository ownership or self-execution |
 
@@ -85,7 +89,7 @@ A successful exact run may establish only that:
 
 - the pinned registry commits were acquired for that run;
 - each configured command exited successfully under the observed runner and environment;
-- the recorded outputs matched the adopted expected-result contract used by that run;
+- the recorded outputs matched the expected-result contract used by that run;
 - the resulting evidence remains attributable to the exact source, evaluator, configuration, and environment.
 
 The interpretation must preserve each command's declared verification depth. A presence check remains a presence check. An `npm test` result is only as strong as the package script and verifier it invokes.
@@ -106,6 +110,7 @@ A successful run does **not** mean:
 - all 52 public Riverbraid repositories were evaluated;
 - the F3/F4 functional core has been selected or proven;
 - an independent operator reproduced the profile;
+- the allowlist rejects every unsupported command shape unless that negative case is directly tested;
 - downstream AI system behavior is assured.
 
 ## Non-Claims
@@ -119,7 +124,8 @@ This Evaluation Kit explicitly does **not**:
 - make claims about the behavior of systems that use this as a component;
 - constitute an external audit or third-party assurance;
 - convert registry membership into equal verification depth;
-- convert file presence into behavioral verification.
+- convert file presence into behavioral verification;
+- convert one successful positive-path run into proof of every negative or degraded condition.
 
 ## Files
 
@@ -129,7 +135,7 @@ This Evaluation Kit explicitly does **not**:
 | `START_HERE.md` | First evaluator entry point |
 | `ONE_PAGE_SYSTEM_MAP.md` | Short architecture map |
 | `CLAIM_LEVELS.md` | Claim ladder and evidence rules |
-| `claim-ceiling.json` | Machine-readable allowed claims, refused claims, and current limitations |
+| `claim-ceiling.json` | Machine-readable allowed claims, refused claims, observed execution, and current limitations |
 | `EVALUATOR_DECISION_TREE.md` | Fit check before evaluation |
 | `RISK_PROFILE_MATRIX.md` | Risk-profile boundary guide |
 | `MATURITY_LADDER.md` | Current maturity framing |
@@ -142,4 +148,4 @@ This Evaluation Kit explicitly does **not**:
 | `reproduce.ps1` | Windows helper script |
 | `reproduce.sh` | Unix helper script |
 | `.gitattributes` | Line-ending normalization |
-| `.github/workflows/evaluation-kit-runtime.yml` | Intended GitHub Actions verification workflow |
+| `.github/workflows/evaluation-kit-runtime.yml` | GitHub Actions verification workflow |
