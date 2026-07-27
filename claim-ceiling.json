@@ -5,35 +5,70 @@
   "record_type": "CLAIM_CEILING",
   "repository": "Riverbraid/Riverbraid-Evaluation-Kit",
   "artifact_role": "PUBLIC_EVALUATION_PROFILE_CLAIM_BOUNDARY",
-  "status": "DECLARED_NOT_EXECUTION_EVIDENCE",
+  "status": "DECLARED_BOUNDARY_WITH_POSITIVE_WORKFLOW_OBSERVATION",
   "subject_binding": {
     "method": "GIT_COMMIT_CONTAINING_THIS_EXACT_FILE_AS_OBSERVED_BY_EVIDENCE_PACKET",
-    "commit_binding_status_before_execution": "UNBOUND_UNTIL_EVIDENCE_PACKET",
+    "commit_binding_status": "PARTIAL_WORKFLOW_OBSERVATION_ONLY",
     "registry_binding": "verified-repo-registry.json exact bytes and pinned commits",
     "expected_result_binding": "expected-results.json exact bytes",
     "environment_binding": "environment.lock.json plus observed workflow or container environment"
   },
+  "observed_execution": {
+    "observation_class": "GITHUB_ACTIONS_PR_MERGE_REF_POSITIVE_PATH",
+    "pr": "Riverbraid/Riverbraid-Evaluation-Kit#13",
+    "head_commit": "727b841eaed11a49c241533f0b01d961a035cbc3",
+    "base_commit": "41b57ccc01519a58355e36a0ebdb06f511c18fb0",
+    "observed_merge_ref_commit": "afa9c0d8f762eabece4ad002737d70aa2e573782",
+    "workflow_run_id": 30280572040,
+    "job_id": 90025597247,
+    "workflow_name": "Riverbraid Evaluation Kit Runtime",
+    "result": "SUCCESS",
+    "observed_successful_steps": [
+      "Verify required files exist",
+      "Validate verified-repo-registry.json",
+      "Build Docker image",
+      "Run evaluation kit",
+      "Generate verification success summary"
+    ],
+    "runner_observation": {
+      "operating_system": "Ubuntu 24.04.4 LTS",
+      "runner_image": "ubuntu-24.04",
+      "runner_image_version": "20260720.247.2",
+      "token_permissions": [
+        "contents: read",
+        "metadata: read"
+      ]
+    },
+    "limits": [
+      "The run evaluated the GitHub pull-request merge ref, not a future final main commit.",
+      "The successful allowed-command path does not prove that an unlisted command fails closed.",
+      "The run does not resolve whether package lifecycle scripts are acceptable for the adopted scope.",
+      "The Docker image built successfully, but the base-image digest remains unpinned.",
+      "The run does not establish independent reproduction or equal verification depth."
+    ]
+  },
   "allowed_claims": [
     "Riverbraid-Evaluation-Kit is the current public entry and evaluation surface for the declared Riverbraid governance floor.",
     "The repository contains a pinned 30-repository registry, expected results, a bounded command-dispatch path, container and workflow scaffolding, and public reproduction instructions.",
+    "The PR #13 merge-ref positive path executed successfully in GitHub Actions run 30280572040 under the recorded runner conditions.",
     "A specific execution may claim only that the configured commands for the pinned commits produced the recorded results under the observed environment and evaluator version.",
     "Registry command depth varies and must remain visible when interpreting any aggregate result."
   ],
   "current_limitations": [
     {
-      "code": "COMMAND_DISPATCH_PATCHED_UNVERIFIED",
+      "code": "COMMAND_DISPATCH_POSITIVE_PATH_EXECUTED_NEGATIVE_DENIAL_UNVERIFIED",
       "issue": "Riverbraid/Riverbraid-Evaluation-Kit#8",
-      "claim_effect": "The allowlist patch is present in source but successful execution and fail-closed denial evidence are still required."
+      "claim_effect": "The allowlisted positive path executed successfully in GitHub Actions, but explicit evidence that an unlisted command fails closed and a disposition on package lifecycle scripts are still required."
     },
     {
       "code": "DOCKER_BASE_DIGEST_UNPINNED",
       "issue": "Riverbraid/Riverbraid-Evaluation-Kit#9",
-      "claim_effect": "The current environment does not support an immutable base-image or fully hermetic reproduction claim."
+      "claim_effect": "The Docker build succeeded in the observed workflow, but the environment still does not support an immutable base-image or fully hermetic reproduction claim."
     },
     {
       "code": "REGISTRY_FRESHNESS_LOCKED",
       "issue": "Riverbraid/Riverbraid-Evaluation-Kit#10",
-      "claim_effect": "The pinned registry is a historical/current profile snapshot and must not be described as automatically fresh relative to default branches."
+      "claim_effect": "The pinned registry is a profile snapshot and must not be described as automatically fresh relative to default branches."
     },
     {
       "code": "VERIFICATION_DEPTH_NONUNIFORM",
@@ -61,7 +96,8 @@
     "presence_check_equals_behavioral_verification": false,
     "aggregate_pass_conceals_component_depth": false,
     "registry_membership_equals_functional_core_membership": false,
-    "workflow_success_equals_external_independence": false
+    "workflow_success_equals_external_independence": false,
+    "positive_allowlist_execution_equals_negative_denial_proof": false
   },
   "related_surfaces": {
     "registry": "verified-repo-registry.json",
@@ -79,11 +115,13 @@
     "verification-depth change",
     "environment or Docker lock change",
     "claim-boundary change",
+    "new workflow run against a changed merge or main subject",
     "execution evidence that closes or changes a listed limitation"
   ],
   "nonclaims": [
-    "This declaration does not prove that the workflow or container executed.",
-    "This declaration does not establish independent reproduction.",
+    "This declaration is not itself execution evidence; it references one observed workflow run.",
+    "The observed positive-path run does not establish independent reproduction.",
+    "The observed positive-path run does not prove unlisted-command denial behavior.",
     "This declaration does not upgrade a presence check into a behavioral verifier.",
     "This declaration does not close issues 8, 9, 10, or 11."
   ]
