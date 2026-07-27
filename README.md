@@ -11,18 +11,20 @@ Riverbraid-Evaluation-Kit is the current public entry and evaluation surface for
 
 This repository defines the current public pinned verification registry and reproduction path for Riverbraid's governance floor.
 
-`claim-ceiling.json` is the machine-readable declaration of what the exact profile may and may not claim. It is a boundary artifact that references observed execution; it does not replace the underlying workflow result or evidence packet.
+`claim-ceiling.json` is the machine-readable declaration of what the exact profile may and may not claim. It defines the required command-policy test contract but does not self-certify the latest workflow result; consult the workflow or PR evidence for the exact commit being assessed.
 
 ## Evidence boundary
 
 This repository does not claim certification, legal approval, production readiness, absolute security, external audit, complete AI safety, adoption, or absence of defects.
 
-Current evidence and limitations:
+Current controls and limitations:
 
-- the allowlisted positive workflow path executed successfully for the PR #13 merge ref in GitHub Actions run `30280572040`;
-- explicit negative evidence that an unlisted command fails closed remains required;
-- a disposition on package lifecycle scripts remains required;
-- the Docker image built successfully in that run, but the base-image digest remains unpinned;
+- verifier execution is constrained by `command-policy.sh`;
+- `tests/command-policy-negative.sh` requires an unsupported command to fail closed and emit an attributable reason;
+- CI must execute that negative test before building and running the Evaluation Kit container;
+- the latest result for an exact commit belongs in the corresponding workflow or evidence record;
+- a disposition on package lifecycle scripts and dependency-install behavior remains required;
+- the Docker base-image digest remains unpinned;
 - registry freshness remains locked pending succession evidence and authority;
 - verification depth is nonuniform, including presence-check-only entries.
 
@@ -45,6 +47,7 @@ The intended primary verification path runs on GitHub Actions.
 
 - verify the required Evaluation Kit files are present;
 - validate that `verified-repo-registry.json` has exactly 30 pinned entries;
+- execute the unsupported-command fail-closed policy test;
 - build the declared Dockerfile;
 - run the verification suite in the resulting container;
 - clone each registered repository at its pinned commit;
@@ -52,11 +55,9 @@ The intended primary verification path runs on GitHub Actions.
 - compare results against `expected-results.json`;
 - emit a final JSON summary.
 
-**Current observed execution:**
+**Evidence rule:**
 
-GitHub Actions run `30280572040` completed successfully for the PR #13 merge ref. Its successful steps included required-file verification, registry validation, Docker build, Evaluation Kit execution, and generation of the success summary.
-
-That result is positive-path evidence for the exact observed merge candidate. It is not proof that a later changed merge or main commit will produce the same result, and it does not establish the outstanding unlisted-command denial case.
+The workflow definition and test-file presence are not proof that a run succeeded. A runtime claim requires an attributable workflow run or preserved local execution packet for the exact commit being assessed.
 
 ### Optional: Local Docker
 
@@ -76,9 +77,11 @@ Do not describe this path as immutable, hermetic, or fully reproducible while `e
 | Registry entries | 30 |
 | Registry commit state | Pinned snapshot |
 | Registry freshness | Locked / not automatically current with default branches |
-| Command-dispatch hardening | Positive allowlisted path executed / explicit negative denial test outstanding |
+| Command-dispatch hardening | Shared allowlist policy plus required unsupported-command negative test |
+| Latest policy-test execution | External to this README; consult the exact workflow or PR record |
+| Lifecycle-script policy | Unresolved |
 | Verification depth | Nonuniform; classified separately |
-| Docker base image | Build observed successful / digest unpinned |
+| Docker base image | Tag pinned / digest unpinned |
 | Public execution surface | GitHub Actions |
 | Local Docker | Optional |
 | Independent reproduction | Not established by repository ownership or self-execution |
@@ -87,6 +90,7 @@ Do not describe this path as immutable, hermetic, or fully reproducible while `e
 
 A successful exact run may establish only that:
 
+- the required policy tests passed for that exact source state;
 - the pinned registry commits were acquired for that run;
 - each configured command exited successfully under the observed runner and environment;
 - the recorded outputs matched the expected-result contract used by that run;
@@ -110,7 +114,7 @@ A successful run does **not** mean:
 - all 52 public Riverbraid repositories were evaluated;
 - the F3/F4 functional core has been selected or proven;
 - an independent operator reproduced the profile;
-- the allowlist rejects every unsupported command shape unless that negative case is directly tested;
+- package lifecycle-script risk has been resolved;
 - downstream AI system behavior is assured.
 
 ## Non-Claims
@@ -125,7 +129,7 @@ This Evaluation Kit explicitly does **not**:
 - constitute an external audit or third-party assurance;
 - convert registry membership into equal verification depth;
 - convert file presence into behavioral verification;
-- convert one successful positive-path run into proof of every negative or degraded condition.
+- convert one successful run into proof of future unchanged behavior.
 
 ## Files
 
@@ -135,7 +139,7 @@ This Evaluation Kit explicitly does **not**:
 | `START_HERE.md` | First evaluator entry point |
 | `ONE_PAGE_SYSTEM_MAP.md` | Short architecture map |
 | `CLAIM_LEVELS.md` | Claim ladder and evidence rules |
-| `claim-ceiling.json` | Machine-readable allowed claims, refused claims, observed execution, and current limitations |
+| `claim-ceiling.json` | Machine-readable allowed claims, refused claims, test contract, and current limitations |
 | `EVALUATOR_DECISION_TREE.md` | Fit check before evaluation |
 | `RISK_PROFILE_MATRIX.md` | Risk-profile boundary guide |
 | `MATURITY_LADDER.md` | Current maturity framing |
@@ -143,6 +147,8 @@ This Evaluation Kit explicitly does **not**:
 | `verified-repo-registry.json` | Exact repository and commit registry with 30 entries |
 | `expected-results.json` | Expected reproduction output contract |
 | `environment.lock.json` | Tool and environment lock scaffold |
+| `command-policy.sh` | Shared allowlisted command-execution policy |
+| `tests/command-policy-negative.sh` | Unsupported-command fail-closed test |
 | `Dockerfile` | Containerized evaluation environment |
 | `run-verification.sh` | Container verification runner |
 | `reproduce.ps1` | Windows helper script |
