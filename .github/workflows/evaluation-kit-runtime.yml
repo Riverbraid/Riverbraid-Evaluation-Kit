@@ -13,10 +13,55 @@ permissions:
 jobs:
   verify-kit:
     name: Verify Evaluation Kit
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
+      - name: Observe Docker base image identity
+        id: base-image
+        run: |
+          set -euo pipefail
+          base_image="node:20.11.0-bookworm-slim"
+          digest="$(docker buildx imagetools inspect "$base_image" | awk '/^Digest:/ {print $2; exit}')"
+          if [[ ! "$digest" =~ ^sha256:[0-9a-f]{64}$ ]]; then
+            echo "FAIL_CLOSED: unable to resolve attributable Docker base image digest"
+            echo "base_image=$base_image"
+            echo "observed_digest=$digest"
+            exit 1
+          fi
+          echo "BASE_IMAGE_NAME=$base_image"
+          echo "BASE_IMAGE_RESOLVED_DIGEST=$digest"
+          echo "digest=$digest" >> "$GITHUB_OUTPUT"
+
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Verify environment-lock base image identity
+        run: |
+          set -euo pipefail
+          expected_name="node:20.11.0-bookworm-slim"
+          locked_name="$(jq -r '.docker_base_image.name' environment.lock.json)"
+          locked_digest="$(jq -r '.docker_base_image.digest' environment.lock.json)"
+          observed_digest="${{ steps.base-image.outputs.digest }}"
+
+          if [ "$locked_name" != "$expected_name" ]; then
+            echo "FAIL_CLOSED: environment-lock base image name differs from observed workflow subject"
+            echo "expected=$expected_name"
+            echo "actual=$locked_name"
+            exit 1
+          fi
+
+          if [ "$locked_digest" != "$observed_digest" ]; then
+            echo "FAIL_CLOSED: Docker base-image tag no longer resolves to the locked digest"
+            echo "locked=$locked_digest"
+            echo "observed=$observed_digest"
+            exit 1
+          fi
+
+          if ! grep -Fq "@$locked_digest" Dockerfile; then
+            echo "FAIL_CLOSED: Dockerfile is not bound to the environment-lock digest"
+            exit 1
+          fi
+
+          echo "BASE_IMAGE_IDENTITY_LOCK_MATCH"
 
       - name: Verify required files exist
         run: |
@@ -26,6 +71,7 @@ jobs:
             "START_HERE.md"
             "ONE_PAGE_SYSTEM_MAP.md"
             "CLAIM_LEVELS.md"
+            "claim-ceiling.json"
             "EVALUATOR_DECISION_TREE.md"
             "RISK_PROFILE_MATRIX.md"
             "MATURITY_LADDER.md"
@@ -34,7 +80,9 @@ jobs:
             "expected-results.json"
             "environment.lock.json"
             "Dockerfile"
+            "command-policy.sh"
             "run-verification.sh"
+            "tests/command-policy-negative.sh"
             "reproduce.ps1"
             "reproduce.sh"
             ".gitattributes"
@@ -83,6 +131,9 @@ jobs:
 
           echo "Registry validated: 30 entries, all pinned, all valid"
 
+      - name: Verify unsupported commands fail closed
+        run: bash tests/command-policy-negative.sh
+
       - name: Build Docker image
         run: docker build -t riverbraid-evaluator .
 
@@ -102,13 +153,15 @@ jobs:
       - name: Generate verification success summary
         if: success()
         run: |
-          cat > verification-summary.json <<'EOF'
+          cat > verification-summary.json <<EOF
           {
             "status": "GITHUB_ACTIONS_RUNTIME_VERIFICATION_PASS",
             "repository": "Riverbraid/Riverbraid-Evaluation-Kit",
             "runtime_claim": "EXECUTED_IN_GITHUB_ACTIONS",
-            "docker_claim": "VERIFIED_IN_GITHUB_ACTIONS",
-            "verification_surface": "ubuntu-latest GitHub Actions",
+            "docker_claim": "BASE_IMAGE_DIGEST_PINNED_AND_VERIFIED_IN_GITHUB_ACTIONS",
+            "command_policy_negative_test": "ALLOWLIST_NEGATIVE_TEST_PASS",
+            "base_image_locked_digest": "${{ steps.base-image.outputs.digest }}",
+            "verification_surface": "ubuntu-24.04 GitHub Actions",
             "local_windows_claim": "NOT_REQUIRED"
           }
           EOF

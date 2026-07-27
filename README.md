@@ -1,7 +1,8 @@
 # Riverbraid Evaluation Kit v0.1.0 governance floor
 
-This kit is a scaffold for independent reproduction of Riverbraid's verified governance floor.
-It is designed to fail closed.
+This kit is the public evaluation surface and intended independent-reproduction path for Riverbraid's declared governance floor.
+
+It is designed to fail closed. Repository-owned execution does not itself establish independent reproduction.
 
 ## Role in Riverbraid
 
@@ -9,116 +10,161 @@ Riverbraid-Evaluation-Kit is the current public entry and evaluation surface for
 
 ## Public verification boundary
 
-This repository defines the current public canonical verification registry and reproduction path for Riverbraid's governance floor.
+This repository defines the current public pinned verification registry and evaluation path for Riverbraid's governance floor.
+
+`claim-ceiling.json` is the machine-readable declaration of what the exact profile may and may not claim. It defines policy, environment, and dependency-install boundaries but does not self-certify the latest workflow result; consult the workflow or PR evidence for the exact commit being assessed.
 
 ## Evidence boundary
 
 This repository does not claim certification, legal approval, production readiness, absolute security, external audit, complete AI safety, adoption, or absence of defects.
 
-## Verification Paths
+Current controls and limitations:
 
-### Preferred: GitHub Actions (Canonical, No Local Setup Required)
+- verifier execution is constrained by `command-policy.sh`;
+- `tests/command-policy-negative.sh` requires an unsupported command to fail closed and emit an attributable reason;
+- CI must execute that negative test before building and running the Evaluation Kit container;
+- npm dependency installation uses `--ignore-scripts`, so package lifecycle scripts are denied;
+- npm dependency acquisition still uses the network and is not offline or hermetic;
+- the Docker base image is bound by tag and digest in both `Dockerfile` and `environment.lock.json`;
+- CI compares the observed tag digest, locked digest, and Dockerfile digest and fails closed on disagreement;
+- the GitHub Actions runner is `ubuntu-24.04` and checkout is pinned to an exact action commit;
+- the latest result for an exact commit belongs in the corresponding workflow or evidence record;
+- registry freshness remains locked pending succession evidence and authority;
+- verification depth is nonuniform, including presence-check-only entries.
 
-The primary verification path runs on `ubuntu-latest` in GitHub Actions.
+These conditions are enumerated in `claim-ceiling.json`. Remaining limitations are tracked in issues #8, #10, and #11. Base-image digest evidence is tracked in #9 until an exact digest-bound head completes successfully.
+
+## Verification paths
+
+### Preferred public path: GitHub Actions
+
+The intended primary verification path runs on GitHub Actions.
 
 **Steps:**
-1. Navigate to this repository's **Actions** tab
-2. Select **Riverbraid Evaluation Kit Runtime**
-3. Click **Run workflow** button
-4. View the verification summary when complete
 
-**What happens:**
-- All 16 required files are verified present
-- verified-repo-registry.json is validated: exactly 30 entries, all pinned, all valid commits
-- Docker image is built from Dockerfile
-- Docker container runs the full verification suite
-- Each of 30 repositories is cloned at its pinned commit
-- Each verification command runs
-- Results are compared against expected-results.json
-- Final JSON summary shows verification status
+1. Navigate to this repository's **Actions** tab.
+2. Select **Riverbraid Evaluation Kit Runtime**.
+3. Run the workflow.
+4. Inspect the exact workflow result, component results, logs, source identities, and limitations.
 
-**Result:**
-If all checks pass, the workflow emits:
-```json
-{
-  "status": "GITHUB_ACTIONS_RUNTIME_VERIFICATION_PASS",
-  "runtime_claim": "EXECUTED_IN_GITHUB_ACTIONS",
-  "docker_claim": "VERIFIED_IN_GITHUB_ACTIONS",
-  "verification_surface": "ubuntu-latest GitHub Actions",
-  "local_windows_claim": "NOT_REQUIRED"
-}
-```
+**What the workflow is designed to do:**
 
-### Optional: Local Docker (Only If Docker Already Installed)
+- resolve the declared base-image tag identity;
+- verify that the observed tag digest, environment lock, and Dockerfile digest match;
+- verify the required Evaluation Kit files are present;
+- validate that `verified-repo-registry.json` has exactly 30 pinned entries;
+- execute the unsupported-command fail-closed policy test;
+- build the digest-pinned Dockerfile;
+- run the verification suite in the resulting container;
+- clone each registered repository at its pinned commit;
+- install npm dependencies with lifecycle scripts denied;
+- execute each configured bounded verification command;
+- compare results against `expected-results.json`;
+- emit a final JSON summary.
 
-If Docker is already working on your machine, you may also reproduce locally:
+**Evidence rule:**
+
+The workflow definition and test-file presence are not proof that a run succeeded. A runtime claim requires an attributable workflow run or preserved local execution packet for the exact commit being assessed.
+
+### Optional: Local Docker
+
+If Docker is already working on the operator's machine, the declared container path may be attempted:
 
 ```bash
 docker build -t riverbraid-evaluator .
 docker run --rm riverbraid-evaluator
 ```
 
-**Important:** Do not install Docker as a first step. GitHub Actions is the canonical verification path.
+The digest pin makes the declared base-image identity immutable for that reference. It does not make npm dependency acquisition offline, hermetic, vendored, or fully supply-chain isolated.
 
-## Current State
+## Current state
 
 | Aspect | Status |
-|--------|--------|
+|---|---|
 | Registry entries | 30 |
-| Commit state | All pinned |
-| Claim level target | Independent reproduction |
-| Canonical verification surface | GitHub Actions on ubuntu-latest |
-| Local Docker requirement | Optional |
-| Windows Docker requirement | Not required |
+| Registry commit state | Pinned snapshot |
+| Registry freshness | Locked / not automatically current with default branches |
+| Command-dispatch hardening | Shared allowlist policy plus required unsupported-command negative test |
+| npm lifecycle scripts | Denied with `--ignore-scripts` |
+| npm dependency acquisition | Network-dependent / not hermetic |
+| Latest policy-test execution | External to this README; consult the exact workflow or PR record |
+| Verification depth | Nonuniform; classified separately |
+| Docker base image | Tag and digest pinned |
+| Docker base digest | `sha256:ecc9a2581f8588014a49a523a9ed146d27963f6d988d11bd16bbdcb3598f5f98` |
+| GitHub Actions runner | `ubuntu-24.04` |
+| Checkout action | Exact commit pinned |
+| Public execution surface | GitHub Actions |
+| Local Docker | Optional |
+| Independent reproduction | Not established by repository ownership or self-execution |
 
-## What a PASS Means
+## What a successful run means
 
-A PASS means:
-- The pinned registry was successfully cloned at exact commits
-- Each configured verification command executed and produced no errors
-- The final summary matched `expected-results.json`
-- Reproduction is deterministic and repeatable in the specified environment
+A successful exact run may establish only that:
 
-## What a PASS Does NOT Mean
+- the environment-identity and policy tests passed for that exact source state;
+- the pinned registry commits were acquired for that run;
+- npm dependency installation completed with lifecycle scripts denied;
+- each configured command exited successfully under the observed runner and environment;
+- the recorded outputs matched the expected-result contract used by that run;
+- the resulting evidence remains attributable to the exact source, evaluator, configuration, and environment.
 
-A PASS does **not** mean:
-- The system is defect-free or bug-free
-- The system is production-safe or deployment-ready
-- The system is certified by any authority
-- The system is externally audited or independently reviewed
-- The system is suitable for any specific risk profile
-- The system is compliant with any regulation or standard
-- The system is safe in all deployment contexts
-- Any claim about downstream AI system behavior
+The interpretation must preserve each command's declared verification depth. A presence check remains a presence check. An `npm test` result is only as strong as the package script and verifier it invokes.
 
-## Non-Claims
+## What a successful run does not mean
 
-This evaluation kit explicitly does **not**:
-- Certify AI systems or models
-- Provide legal approval, compliance certification, or liability protection
-- Replace security review, legal review, or compliance audit
-- Guarantee safety, defect-freeness, or production readiness
-- Make any claims about the behavior of systems that use this as a component
-- Constitute an external audit or third-party assurance
+A successful run does **not** mean:
+
+- the system is defect-free or bug-free;
+- the system is production-safe or deployment-ready;
+- the system is certified by any authority;
+- the system is externally audited or independently reviewed;
+- the system is suitable for any specific risk profile;
+- the system complies with any regulation or standard;
+- the system is safe in all deployment contexts;
+- the registry is automatically fresh relative to current default branches;
+- all 30 entries have equal behavioral verification depth;
+- dependency acquisition was offline, hermetic, vendored, or fully supply-chain isolated;
+- all 52 public Riverbraid repositories were evaluated;
+- the F3/F4 functional core has been selected or proven;
+- an independent operator reproduced the profile;
+- downstream AI system behavior is assured.
+
+## Non-claims
+
+This Evaluation Kit explicitly does **not**:
+
+- certify AI systems or models;
+- provide legal approval, compliance certification, or liability protection;
+- replace security review, legal review, or compliance audit;
+- guarantee safety, defect-freeness, or production readiness;
+- make claims about the behavior of systems that use this as a component;
+- constitute an external audit or third-party assurance;
+- convert registry membership into equal verification depth;
+- convert file presence into behavioral verification;
+- convert lifecycle-script denial or base-image pinning into an offline or hermetic dependency claim;
+- convert one successful run into proof of future unchanged behavior.
 
 ## Files
 
 | File | Purpose |
 |---|---|
-| README.md | Root repository entrance and setup map |
-| START_HERE.md | First evaluator entry point |
-| ONE_PAGE_SYSTEM_MAP.md | Short architecture map |
-| CLAIM_LEVELS.md | Claim ladder and evidence rules |
-| EVALUATOR_DECISION_TREE.md | Fit check before evaluation |
-| RISK_PROFILE_MATRIX.md | Risk profile boundary guide |
-| MATURITY_LADDER.md | Current maturity framing |
-| REPRODUCE_RIVERBRAID_v0.1.0-governance-floor.md | Reproduction guide |
-| verified-repo-registry.json | Exact repository and commit registry (30 entries) |
-| expected-results.json | Expected reproduction output |
-| environment.lock.json | Tool and environment lock scaffold |
-| Dockerfile | Containerized evaluation environment |
-| run-verification.sh | Container verification runner |
-| reproduce.ps1 | Windows helper script |
-| reproduce.sh | Unix helper script |
-| .gitattributes | Line ending normalization |
-| .github/workflows/evaluation-kit-runtime.yml | GitHub Actions verification workflow |
+| `README.md` | Root repository entrance and bounded setup map |
+| `START_HERE.md` | First evaluator entry point |
+| `ONE_PAGE_SYSTEM_MAP.md` | Short architecture map |
+| `CLAIM_LEVELS.md` | Claim ladder and evidence rules |
+| `claim-ceiling.json` | Machine-readable allowed claims, refused claims, controls, and current limitations |
+| `EVALUATOR_DECISION_TREE.md` | Fit check before evaluation |
+| `RISK_PROFILE_MATRIX.md` | Risk-profile boundary guide |
+| `MATURITY_LADDER.md` | Current maturity framing |
+| `REPRODUCE_RIVERBRAID_v0.1.0-governance-floor.md` | Reproduction guide |
+| `verified-repo-registry.json` | Exact repository and commit registry with 30 entries |
+| `expected-results.json` | Expected evaluation output contract |
+| `environment.lock.json` | Runtime, action, base-image, and dependency-boundary lock |
+| `command-policy.sh` | Shared allowlisted command-execution policy |
+| `tests/command-policy-negative.sh` | Unsupported-command fail-closed test |
+| `Dockerfile` | Digest-pinned containerized evaluation environment |
+| `run-verification.sh` | Container verification runner |
+| `reproduce.ps1` | Windows helper script |
+| `reproduce.sh` | Unix helper script |
+| `.gitattributes` | Line-ending normalization |
+| `.github/workflows/evaluation-kit-runtime.yml` | GitHub Actions verification workflow |

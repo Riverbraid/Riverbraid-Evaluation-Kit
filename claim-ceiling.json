@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "schema_id": "rb.claim-ceiling",
+  "schema_version": "0.2.0",
+  "record_type": "CLAIM_CEILING",
+  "repository": "Riverbraid/Riverbraid-Evaluation-Kit",
+  "artifact_role": "PUBLIC_EVALUATION_PROFILE_CLAIM_BOUNDARY",
+  "status": "DECLARED_BOUNDARY_WITH_PINNED_BASE_IDENTITY",
+  "subject_binding": {
+    "method": "GIT_COMMIT_CONTAINING_THIS_EXACT_FILE_AS_OBSERVED_BY_EVIDENCE_PACKET",
+    "commit_binding_status": "LATEST_EXECUTION_EVIDENCE_EXTERNAL_TO_THIS_SELF_DESCRIPTION",
+    "registry_binding": "verified-repo-registry.json exact bytes and pinned commits",
+    "expected_result_binding": "expected-results.json exact bytes",
+    "environment_binding": "environment.lock.json plus observed workflow or container environment"
+  },
+  "historical_execution_observation": {
+    "observation_class": "GITHUB_ACTIONS_PR_MERGE_REF_POSITIVE_PATH",
+    "pr": "Riverbraid/Riverbraid-Evaluation-Kit#13",
+    "head_commit": "727b841eaed11a49c241533f0b01d961a035cbc3",
+    "base_commit": "41b57ccc01519a58355e36a0ebdb06f511c18fb0",
+    "observed_merge_ref_commit": "afa9c0d8f762eabece4ad002737d70aa2e573782",
+    "workflow_run_id": 30280572040,
+    "job_id": 90025597247,
+    "result": "SUCCESS",
+    "limits": [
+      "This historical run predates the command-policy negative-test, lifecycle-script-denial, pinned-action, and base-digest controls added later in PR #13.",
+      "The run evaluated a GitHub pull-request merge ref, not a future final main commit.",
+      "The run does not establish independent reproduction or equal verification depth."
+    ]
+  },
+  "command_policy_contract": {
+    "policy_file": "command-policy.sh",
+    "consumer": "run-verification.sh",
+    "negative_test": "tests/command-policy-negative.sh",
+    "workflow_requirement": ".github/workflows/evaluation-kit-runtime.yml",
+    "required_negative_result": "ALLOWLIST_NEGATIVE_TEST_PASS",
+    "dependency_install_policy": "NPM_CI_WITH_IGNORE_SCRIPTS",
+    "package_lock_creation_policy": "NPM_INSTALL_PACKAGE_LOCK_ONLY_WITH_IGNORE_SCRIPTS",
+    "lifecycle_scripts": "DENIED",
+    "evidence_rule": "The current pass or failure belongs in the workflow or evidence record for the exact assessed commit; this declaration does not self-certify it."
+  },
+  "environment_contract": {
+    "platform": "linux/amd64",
+    "github_actions_runner": "ubuntu-24.04",
+    "checkout_action": "actions/checkout@11d5960a326750d5838078e36cf38b85af677262",
+    "docker_base_name": "node:20.11.0-bookworm-slim",
+    "docker_base_digest": "sha256:ecc9a2581f8588014a49a523a9ed146d27963f6d988d11bd16bbdcb3598f5f98",
+    "dockerfile_binding": "TAG_AND_DIGEST",
+    "workflow_identity_rule": "The observed tag digest, environment-lock digest, and Dockerfile digest must match or the workflow fails closed.",
+    "dependency_acquisition": "NETWORK_REQUIRED",
+    "offline_or_hermetic": false
+  },
+  "allowed_claims": [
+    "Riverbraid-Evaluation-Kit is the current public entry and evaluation surface for the declared Riverbraid governance floor.",
+    "The repository contains a pinned 30-repository registry, expected results, a bounded command-dispatch policy, an explicit unsupported-command negative test, lifecycle-script-denied npm installation, a digest-pinned Docker base, and a pinned GitHub checkout action.",
+    "A specific execution may claim only that the configured commands, policy tests, and environment-identity checks produced the recorded results under the observed source, environment, and evaluator version.",
+    "Registry command depth varies and must remain visible when interpreting any aggregate result."
+  ],
+  "current_limitations": [
+    {
+      "code": "DECLARED_NETWORK_DEPENDENCY_ACQUISITION",
+      "issue": "Riverbraid/Riverbraid-Evaluation-Kit#8",
+      "claim_effect": "Lifecycle scripts are denied, but npm dependency acquisition still uses the network and therefore does not support an offline, hermetic, or fully supply-chain-isolated claim."
+    },
+    {
+      "code": "REGISTRY_FRESHNESS_LOCKED",
+      "issue": "Riverbraid/Riverbraid-Evaluation-Kit#10",
+      "claim_effect": "The pinned registry is a profile snapshot and must not be described as automatically fresh relative to default branches."
+    },
+    {
+      "code": "VERIFICATION_DEPTH_NONUNIFORM",
+      "issue": "Riverbraid/Riverbraid-Evaluation-Kit#11",
+      "claim_effect": "A registry pass does not establish equal behavioral verification depth across all 30 entries."
+    }
+  ],
+  "refused_claims": [
+    "certification",
+    "legal approval or regulatory compliance",
+    "production readiness",
+    "absolute security",
+    "external audit or independent review",
+    "complete AI safety",
+    "adoption",
+    "automatic registry freshness",
+    "equal verification depth across all registry entries",
+    "offline or hermetic reproduction",
+    "full supply-chain isolation",
+    "full 52-repository account verification",
+    "full constellation operation",
+    "downstream AI behavior assurance",
+    "absence of defects"
+  ],
+  "result_interpretation_rules": {
+    "configured_command_success_equals_declared_command_success_only": true,
+    "presence_check_equals_behavioral_verification": false,
+    "aggregate_pass_conceals_component_depth": false,
+    "registry_membership_equals_functional_core_membership": false,
+    "workflow_success_equals_external_independence": false,
+    "source_test_presence_equals_test_execution": false,
+    "ignore_scripts_equals_offline_dependency_resolution": false,
+    "digest_pinned_base_equals_hermetic_reproduction": false
+  },
+  "related_surfaces": {
+    "registry": "verified-repo-registry.json",
+    "expected_results": "expected-results.json",
+    "environment_lock": "environment.lock.json",
+    "dockerfile": "Dockerfile",
+    "command_policy": "command-policy.sh",
+    "command_policy_negative_test": "tests/command-policy-negative.sh",
+    "runner": "run-verification.sh",
+    "workflow": ".github/workflows/evaluation-kit-runtime.yml",
+    "verification_depth": "Riverbraid/Riverbraid-Documentation/docs/VERIFICATION_DEPTH_CLASSIFICATION.md",
+    "account_classification": "Riverbraid/Riverbraid-Golds/PUBLIC-REPOSITORY-CLASSIFICATION.json"
+  },
+  "review_triggers": [
+    "registry succession or pin change",
+    "expected-results change",
+    "command-policy or dispatch change",
+    "dependency-install policy change",
+    "verification-depth change",
+    "Docker base tag or digest change",
+    "GitHub runner or action identity change",
+    "claim-boundary change",
+    "new workflow run against a changed merge or main subject",
+    "execution evidence that closes or changes a listed limitation"
+  ],
+  "nonclaims": [
+    "This declaration is not itself execution evidence.",
+    "A successful repository-owned workflow does not establish independent reproduction.",
+    "Digest pinning removes one mutable base-image reference but does not make network dependency acquisition offline or hermetic.",
+    "This declaration does not upgrade a presence check into a behavioral verifier.",
+    "Issue closure requires attributable exact-head execution evidence, not this file alone."
+  ]
+}
