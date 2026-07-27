@@ -6,6 +6,7 @@ WORKDIR /evaluator
 COPY verified-repo-registry.json ./
 COPY expected-results.json ./
 COPY environment.lock.json ./
+COPY command-policy.sh ./
 COPY run-verification.sh ./
 RUN chmod +x run-verification.sh
 CMD ["./run-verification.sh"]
