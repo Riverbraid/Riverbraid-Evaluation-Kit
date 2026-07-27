@@ -11,7 +11,7 @@ Riverbraid-Evaluation-Kit is the current public entry and evaluation surface for
 
 This repository defines the current public pinned verification registry and reproduction path for Riverbraid's governance floor.
 
-`claim-ceiling.json` is the machine-readable declaration of what the exact profile may and may not claim. It defines the required command-policy test contract but does not self-certify the latest workflow result; consult the workflow or PR evidence for the exact commit being assessed.
+`claim-ceiling.json` is the machine-readable declaration of what the exact profile may and may not claim. It defines required policy tests and dependency-install boundaries but does not self-certify the latest workflow result; consult the workflow or PR evidence for the exact commit being assessed.
 
 ## Evidence boundary
 
@@ -22,8 +22,9 @@ Current controls and limitations:
 - verifier execution is constrained by `command-policy.sh`;
 - `tests/command-policy-negative.sh` requires an unsupported command to fail closed and emit an attributable reason;
 - CI must execute that negative test before building and running the Evaluation Kit container;
+- npm dependency installation uses `--ignore-scripts`, so package lifecycle scripts are denied;
+- npm dependency acquisition still uses the network and is not offline or hermetic;
 - the latest result for an exact commit belongs in the corresponding workflow or evidence record;
-- a disposition on package lifecycle scripts and dependency-install behavior remains required;
 - the Docker base-image digest remains unpinned;
 - registry freshness remains locked pending succession evidence and authority;
 - verification depth is nonuniform, including presence-check-only entries.
@@ -51,6 +52,7 @@ The intended primary verification path runs on GitHub Actions.
 - build the declared Dockerfile;
 - run the verification suite in the resulting container;
 - clone each registered repository at its pinned commit;
+- install npm dependencies with lifecycle scripts denied;
 - execute each configured bounded verification command;
 - compare results against `expected-results.json`;
 - emit a final JSON summary.
@@ -68,7 +70,7 @@ docker build -t riverbraid-evaluator .
 docker run --rm riverbraid-evaluator
 ```
 
-Do not describe this path as immutable, hermetic, or fully reproducible while `environment.lock.json` records the base image digest as `UNPINNED`.
+Do not describe this path as immutable, offline, hermetic, or fully reproducible while the Docker digest is unpinned and npm dependencies are acquired from the network.
 
 ## Current State
 
@@ -78,8 +80,9 @@ Do not describe this path as immutable, hermetic, or fully reproducible while `e
 | Registry commit state | Pinned snapshot |
 | Registry freshness | Locked / not automatically current with default branches |
 | Command-dispatch hardening | Shared allowlist policy plus required unsupported-command negative test |
+| npm lifecycle scripts | Denied with `--ignore-scripts` |
+| npm dependency acquisition | Network-dependent / not hermetic |
 | Latest policy-test execution | External to this README; consult the exact workflow or PR record |
-| Lifecycle-script policy | Unresolved |
 | Verification depth | Nonuniform; classified separately |
 | Docker base image | Tag pinned / digest unpinned |
 | Public execution surface | GitHub Actions |
@@ -92,6 +95,7 @@ A successful exact run may establish only that:
 
 - the required policy tests passed for that exact source state;
 - the pinned registry commits were acquired for that run;
+- npm dependency installation completed with lifecycle scripts denied;
 - each configured command exited successfully under the observed runner and environment;
 - the recorded outputs matched the expected-result contract used by that run;
 - the resulting evidence remains attributable to the exact source, evaluator, configuration, and environment.
@@ -111,10 +115,10 @@ A successful run does **not** mean:
 - the system is safe in all deployment contexts;
 - the registry is automatically fresh relative to current default branches;
 - all 30 entries have equal behavioral verification depth;
+- dependency acquisition was offline, hermetic, or fully supply-chain isolated;
 - all 52 public Riverbraid repositories were evaluated;
 - the F3/F4 functional core has been selected or proven;
 - an independent operator reproduced the profile;
-- package lifecycle-script risk has been resolved;
 - downstream AI system behavior is assured.
 
 ## Non-Claims
@@ -129,6 +133,7 @@ This Evaluation Kit explicitly does **not**:
 - constitute an external audit or third-party assurance;
 - convert registry membership into equal verification depth;
 - convert file presence into behavioral verification;
+- convert lifecycle-script denial into an offline or hermetic dependency claim;
 - convert one successful run into proof of future unchanged behavior.
 
 ## Files
@@ -139,7 +144,7 @@ This Evaluation Kit explicitly does **not**:
 | `START_HERE.md` | First evaluator entry point |
 | `ONE_PAGE_SYSTEM_MAP.md` | Short architecture map |
 | `CLAIM_LEVELS.md` | Claim ladder and evidence rules |
-| `claim-ceiling.json` | Machine-readable allowed claims, refused claims, test contract, and current limitations |
+| `claim-ceiling.json` | Machine-readable allowed claims, refused claims, policy controls, and current limitations |
 | `EVALUATOR_DECISION_TREE.md` | Fit check before evaluation |
 | `RISK_PROFILE_MATRIX.md` | Risk-profile boundary guide |
 | `MATURITY_LADDER.md` | Current maturity framing |
