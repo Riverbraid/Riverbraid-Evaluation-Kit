@@ -34,18 +34,34 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
-      - name: Verify environment-lock base image name
+      - name: Verify environment-lock base image identity
         run: |
           set -euo pipefail
           expected_name="node:20.11.0-bookworm-slim"
           locked_name="$(jq -r '.docker_base_image.name' environment.lock.json)"
+          locked_digest="$(jq -r '.docker_base_image.digest' environment.lock.json)"
+          observed_digest="${{ steps.base-image.outputs.digest }}"
+
           if [ "$locked_name" != "$expected_name" ]; then
             echo "FAIL_CLOSED: environment-lock base image name differs from observed workflow subject"
             echo "expected=$expected_name"
             echo "actual=$locked_name"
             exit 1
           fi
-          echo "BASE_IMAGE_NAME_MATCH"
+
+          if [ "$locked_digest" != "$observed_digest" ]; then
+            echo "FAIL_CLOSED: Docker base-image tag no longer resolves to the locked digest"
+            echo "locked=$locked_digest"
+            echo "observed=$observed_digest"
+            exit 1
+          fi
+
+          if ! grep -Fq "@$locked_digest" Dockerfile; then
+            echo "FAIL_CLOSED: Dockerfile is not bound to the environment-lock digest"
+            exit 1
+          fi
+
+          echo "BASE_IMAGE_IDENTITY_LOCK_MATCH"
 
       - name: Verify required files exist
         run: |
@@ -142,9 +158,9 @@ jobs:
             "status": "GITHUB_ACTIONS_RUNTIME_VERIFICATION_PASS",
             "repository": "Riverbraid/Riverbraid-Evaluation-Kit",
             "runtime_claim": "EXECUTED_IN_GITHUB_ACTIONS",
-            "docker_claim": "VERIFIED_IN_GITHUB_ACTIONS",
+            "docker_claim": "BASE_IMAGE_DIGEST_PINNED_AND_VERIFIED_IN_GITHUB_ACTIONS",
             "command_policy_negative_test": "ALLOWLIST_NEGATIVE_TEST_PASS",
-            "base_image_observed_digest": "${{ steps.base-image.outputs.digest }}",
+            "base_image_locked_digest": "${{ steps.base-image.outputs.digest }}",
             "verification_surface": "ubuntu-24.04 GitHub Actions",
             "local_windows_claim": "NOT_REQUIRED"
           }
