@@ -1,0 +1,54 @@
+{
+  "core_check_contract": {
+    "acceptance_rule": "A successor-profile PASS is invalid unless the exact subject commit contains these exact Core check-contract bytes and the Core result reports the same profile definition digest.",
+    "expected_core_evaluator_ref": "Riverbraid-Core/mechanical-verify.mjs",
+    "mechanical_profile_path": "mechanical-profile.json",
+    "mechanical_profile_sha256": "638dcd8f8fe47dcd667a9c4fda86fbe679c8f1984d8cf03ffd973ef640c1775d",
+    "profile_ref": "urn:riverbraid:core:mechanical-profile:v0.1",
+    "verifier_path": "mechanical-verify.mjs",
+    "verifier_sha256": "489c3f2f6caa9a9ac87b0284f33a68e48b5990b09ff95586ff4ee8fbdab11524"
+  },
+  "excluded_repository_classes": [
+    "ACTIVE_EXPERIMENTAL_NONCONTROLLING",
+    "HISTORICAL_PENDING_ARCHIVE"
+  ],
+  "network_semantics": "Network may be used only to acquire the exact source subject. Structural validation of recovered Riverbraid records must not require vocabulary dereferencing.",
+  "nonclaims": [
+    "NO_CERTIFICATION",
+    "NO_TRUTH_OR_MEANING_JUDGMENT",
+    "NO_EVIDENTIARY_WEIGHT_JUDGMENT",
+    "NO_GENERAL_SUITABILITY",
+    "NO_EXTERNAL_AUDIT_CLAIM",
+    "NO_DOWNSTREAM_AI_BEHAVIOR_CLAIM"
+  ],
+  "profile_id": "urn:riverbraid:profile:mechanical-reproduction:v0.1",
+  "profile_owner_ref": "https://github.com/Riverbraid/Riverbraid-Evaluation-Kit",
+  "profile_version": "0.1.0",
+  "required_checks": [
+    {
+      "check_id": "RB-CORE-MECHANICAL-BOUNDARY",
+      "contract_ref": "urn:riverbraid:check:core-mechanical-boundary:v0.1"
+    }
+  ],
+  "result_schema_ref": "profiles/mechanical-reproduction-v0.1/result.schema.json",
+  "result_terms": [
+    "PASS",
+    "FAIL",
+    "BLOCKED",
+    "UNAVAILABLE",
+    "NOT_ASSESSED",
+    "INVALID_ATTEMPT"
+  ],
+  "status": "R3_CANDIDATE_NOT_RELEASED",
+  "subject_identity_rule": "Each execution MUST receive an exact 40-hex Core commit and record it in the result.",
+  "technical_roles": [
+    {
+      "repository_ref": "https://github.com/Riverbraid/Riverbraid-Evaluation-Kit",
+      "role": "EVALUATOR_SOURCE"
+    },
+    {
+      "repository_ref": "https://github.com/Riverbraid/Riverbraid-Core",
+      "role": "MECHANICAL_SUBJECT"
+    }
+  ]
+}

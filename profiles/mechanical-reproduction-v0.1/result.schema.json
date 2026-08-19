@@ -1,0 +1,148 @@
+{
+  "$id": "urn:riverbraid:schema:mechanical-reproduction-result:v0.1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "checks": {
+      "items": {
+        "additionalProperties": true,
+        "properties": {
+          "check_ref": {
+            "type": "string"
+          },
+          "result": {
+            "enum": [
+              "PASS",
+              "FAIL",
+              "BLOCKED",
+              "UNAVAILABLE",
+              "NOT_ASSESSED",
+              "INVALID_ATTEMPT"
+            ]
+          }
+        },
+        "required": [
+          "check_ref",
+          "result"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "environment": {
+      "additionalProperties": true,
+      "type": "object"
+    },
+    "evaluator_commit": {
+      "pattern": "^[0-9a-f]{40}$",
+      "type": "string"
+    },
+    "evaluator_ref": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "evidence_refs": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "nonclaims": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "profile_definition_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "profile_ref": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "result": {
+      "enum": [
+        "PASS",
+        "FAIL",
+        "BLOCKED",
+        "UNAVAILABLE",
+        "NOT_ASSESSED",
+        "INVALID_ATTEMPT"
+      ]
+    },
+    "result_id": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "subject_commit": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "subject_ref": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "attempted_subject_commit": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "result_id",
+    "subject_ref",
+    "subject_commit",
+    "profile_ref",
+    "profile_definition_sha256",
+    "evaluator_ref",
+    "evaluator_commit",
+    "environment",
+    "checks",
+    "result",
+    "evidence_refs",
+    "nonclaims"
+  ],
+  "type": "object",
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "result": {
+            "const": "INVALID_ATTEMPT"
+          }
+        },
+        "required": [
+          "result"
+        ]
+      },
+      "then": {
+        "properties": {
+          "subject_commit": {
+            "type": "null"
+          }
+        },
+        "required": [
+          "attempted_subject_commit"
+        ]
+      },
+      "else": {
+        "properties": {
+          "subject_commit": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{40}$"
+          }
+        },
+        "not": {
+          "required": [
+            "attempted_subject_commit"
+          ]
+        }
+      }
+    }
+  ]
+}

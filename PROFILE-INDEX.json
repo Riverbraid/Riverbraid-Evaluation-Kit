@@ -1,0 +1,16 @@
+{
+  "current_profile": {
+    "path": "profiles/mechanical-reproduction-v0.1/profile.json",
+    "profile_id": "urn:riverbraid:profile:mechanical-reproduction:v0.1",
+    "status": "R3_CANDIDATE_NOT_RELEASED"
+  },
+  "historical_profiles": [
+    {
+      "path": "profiles/historical/30repo-governance-floor-v0.1.0/",
+      "profile_id": "urn:riverbraid:historical-profile:evaluation-kit:30repo-governance-floor:v0.1.0",
+      "status": "HISTORICAL_BYTES_PRESERVED_NOT_CURRENT_PROFILE"
+    }
+  ],
+  "nonclaim": "Historical qualification is not silently transferred to the successor profile.",
+  "schema": "riverbraid.evaluation-profile-index.v0.1"
+}

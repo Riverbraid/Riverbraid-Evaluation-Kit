@@ -1,0 +1,28 @@
+{
+  "attempted_subject_commit": "not-a-commit",
+  "checks": [
+    {
+      "check_ref": "urn:riverbraid:check:core-contract-binding:v0.1",
+      "result": "INVALID_ATTEMPT"
+    }
+  ],
+  "environment": {
+    "arch": "x64",
+    "node": "v20.11.0",
+    "platform": "linux"
+  },
+  "evaluator_commit": "2222222222222222222222222222222222222222",
+  "evaluator_ref": "https://github.com/Riverbraid/Riverbraid-Evaluation-Kit",
+  "evidence_refs": [
+    "profiles/mechanical-reproduction-v0.1/profile.json"
+  ],
+  "nonclaims": [
+    "INVALID_ATTEMPT records a rejected invocation and establishes no subject result."
+  ],
+  "profile_definition_sha256": "7a8759e8ac007282f3d5b937bd98ee0ca209c280d77f46ff817006b2cde5bc6e",
+  "profile_ref": "urn:riverbraid:profile:mechanical-reproduction:v0.1",
+  "result": "INVALID_ATTEMPT",
+  "result_id": "urn:riverbraid:result:mechanical-reproduction:fixture-invalid-attempt",
+  "subject_commit": null,
+  "subject_ref": "https://github.com/Riverbraid/Riverbraid-Core.git"
+}

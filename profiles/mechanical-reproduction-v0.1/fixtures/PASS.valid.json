@@ -1,0 +1,27 @@
+{
+  "checks": [
+    {
+      "check_ref": "urn:riverbraid:check:core-mechanical-boundary:v0.1",
+      "result": "PASS"
+    }
+  ],
+  "environment": {
+    "arch": "x64",
+    "node": "v20.11.0",
+    "platform": "linux"
+  },
+  "evaluator_commit": "2222222222222222222222222222222222222222",
+  "evaluator_ref": "https://github.com/Riverbraid/Riverbraid-Evaluation-Kit",
+  "evidence_refs": [
+    "profiles/mechanical-reproduction-v0.1/profile.json"
+  ],
+  "nonclaims": [
+    "Fixture PASS is not a truth, trust, safety, certification, or suitability claim."
+  ],
+  "profile_definition_sha256": "7a8759e8ac007282f3d5b937bd98ee0ca209c280d77f46ff817006b2cde5bc6e",
+  "profile_ref": "urn:riverbraid:profile:mechanical-reproduction:v0.1",
+  "result": "PASS",
+  "result_id": "urn:riverbraid:result:mechanical-reproduction:fixture-pass",
+  "subject_commit": "1111111111111111111111111111111111111111",
+  "subject_ref": "https://github.com/Riverbraid/Riverbraid-Core.git"
+}

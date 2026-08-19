@@ -1,32 +1,12 @@
-# Start Here: Riverbraid Evaluation
+# Start here — Riverbraid Evaluation Kit
 
-Riverbraid is a fail closed verification floor.
+The current R3 candidate is a **mechanical reproduction profile**, not a certification program.
 
-It does not certify AI systems. It separates proven state from unproven claims.
+1. Read `README.md`.
+2. Read `PROFILE-INDEX.json`.
+3. Inspect `profiles/mechanical-reproduction-v0.1/profile.json`.
+4. Reproduce an exact Core commit with `run-mechanical-reproduction.mjs --subject-commit <40-hex-sha>`.
 
-If you are looking for production certification, legal approval, or a guarantee that an AI system is safe, stop here. Riverbraid does not claim that.
+The former 30-repository governance-floor evaluation surface is preserved byte-for-byte under `profiles/historical/30repo-governance-floor-v0.1.0/`. Its prior results remain historical evidence and are not rewritten as proof of the successor profile.
 
-If you need a reproducible, inspectable governance floor that shows exactly what can be verified right now, continue.
-
-## Fifteen minute path
-
-1. Read `ONE_PAGE_SYSTEM_MAP.md`.
-2. Read `CLAIM_LEVELS.md`.
-3. Read `EVALUATOR_DECISION_TREE.md`.
-4. Open this repository's **Actions** tab.
-5. Run the **Riverbraid Evaluation Kit Runtime** workflow.
-6. Review the emitted workflow output and artifacts.
-7. Compare the result with `expected-results.json`.
-
-## Optional local Docker path
-
-```bash
-docker build -t riverbraid-evaluator .
-docker run --rm riverbraid-evaluator
-```
-
-The kit is designed to fail closed. If a repository is unpinned, unavailable, dirty, missing a verifier, or produces a mismatched result, reproduction fails.
-
-## Boundary
-
-GitHub Actions is the canonical first path for public evaluation. Local Docker remains an optional reproduction path for users who want to run the kit locally.
+A scoped PASS establishes only that the named checks satisfied the named profile for the recorded evaluator, subject, environment, and evidence.

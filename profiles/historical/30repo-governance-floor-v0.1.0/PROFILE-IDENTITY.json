@@ -1,0 +1,25 @@
+{
+  "entry_count": 30,
+  "nonclaim": "This identity preserves the old profile and does not establish the lean topology.",
+  "preserved_blobs": {
+    "profiles/historical/30repo-governance-floor-v0.1.0/CLAIM_LEVELS.md": "0a5b5956c171339ece28d3818b2a05985111c638",
+    "profiles/historical/30repo-governance-floor-v0.1.0/Dockerfile": "d79030d1be57e5fd0d8461b8ff2d5ce921a7365c",
+    "profiles/historical/30repo-governance-floor-v0.1.0/EVALUATOR_DECISION_TREE.md": "1776644ab0933b0eda06777e8608486e2be56b30",
+    "profiles/historical/30repo-governance-floor-v0.1.0/MATURITY_LADDER.md": "7579a1a61c66d4c4e560f9a2e8901da434002988",
+    "profiles/historical/30repo-governance-floor-v0.1.0/ONE_PAGE_SYSTEM_MAP.md": "b9becd6e073c929cab6f0a1f147e4c76855308f1",
+    "profiles/historical/30repo-governance-floor-v0.1.0/REPRODUCE_RIVERBRAID_v0.1.0-governance-floor.md": "7534230ebe06992f0a894f4789fb653ef820a472",
+    "profiles/historical/30repo-governance-floor-v0.1.0/RISK_PROFILE_MATRIX.md": "85ee11c10138728da125c0caabe83ace74cac4fa",
+    "profiles/historical/30repo-governance-floor-v0.1.0/START_HERE.md": "1d84ff2defa06fd4185bc4e00fa3464cb76cea98",
+    "profiles/historical/30repo-governance-floor-v0.1.0/audit-30-repos-surface.js": "6d26f2f406ff78e150a7c3281f1e45770e838f92",
+    "profiles/historical/30repo-governance-floor-v0.1.0/environment.lock.json": "150550f3f06b07dbf74f3b213e47d67100e09f1e",
+    "profiles/historical/30repo-governance-floor-v0.1.0/evaluation-kit-runtime.yml": "e4cd379e88082b656600f6a6620143462a2ba0a8",
+    "profiles/historical/30repo-governance-floor-v0.1.0/expected-results.json": "8485fcc6dd5fed343de53e6d6f78a737bd7151c7",
+    "profiles/historical/30repo-governance-floor-v0.1.0/reproduce.ps1": "09d6f58512631d56153ca5e00081fbfbe9aec143",
+    "profiles/historical/30repo-governance-floor-v0.1.0/reproduce.sh": "afc0ccb005d13374b8583c095913532808e89af0",
+    "profiles/historical/30repo-governance-floor-v0.1.0/run-verification.sh": "5b77b149c9684a16b574f80054dffd4139f3097c",
+    "profiles/historical/30repo-governance-floor-v0.1.0/verified-repo-registry.json": "f889a8ea1b6b2a5763070341562df1909ae8ec90"
+  },
+  "profile_id": "urn:riverbraid:historical-profile:evaluation-kit:30repo-governance-floor:v0.1.0",
+  "source_commit": "cd814ac415d7952e524c8edd5c595d77189ed24d",
+  "status": "HISTORICAL_PROFILE"
+}
